@@ -19,7 +19,7 @@ formatter.
 
 ## 2. Emphasis
 
-**Bold text** *Italic text* ***Bold and italic*** ~~Strikethrough~~
+**Bold text** _Italic text_ **_Bold and italic_** ~~Strikethrough~~
 
 ## 3. Lists
 
@@ -109,7 +109,7 @@ echo "Hello, World!"
 | :------ | :-----------: | :---------- |
 | Heading |  `# Heading`  | # Title     |
 | Bold    |  `**text**`   | **bold**    |
-| Italic  |   `*text*`    | *italic*    |
+| Italic  |   `*text*`    | _italic_    |
 | Code    | `` `code` ``  | `code`      |
 | Link    | `[text](url)` | [link](url) |
 | Table   |  `\| col \|`  | See above   |
@@ -126,15 +126,15 @@ echo "Hello, World!"
 
 Three ways to write horizontal rules:
 
-______________________________________________________________________
+---
 
 (- - -)
 
-______________________________________________________________________
+---
 
-(\* * \*)
+(\* \* \*)
 
-______________________________________________________________________
+---
 
 ## 10. Strikethrough (GFM Extension)
 
@@ -186,7 +186,7 @@ Line break with `<br>` tag<br>Another line break
 | Rust       | `println!("Hello")`    |
 | Go         | `fmt.Println("Hello")` |
 
-______________________________________________________________________
+---
 
 End of Kitchen Sink Test File
 
