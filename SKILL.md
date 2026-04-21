@@ -3,6 +3,8 @@ name: markdown-formatter
 description: Format markdown to GFM standard. Use the @franlol/opencode-md-table-formatter plugin for live formatting, or fix-tables.js CLI for batch processing. Trigger on any .md file creation or modification.
 license: MIT
 compatibility: opencode
+argument-hint: "{filename} or --all {directory}"
+user-invocable: true
 ---
 
 > This skill follows the [OpenCode Skills Specification](https://open-code.ai/docs/en/skills) and [Anthropic Agent Skills Spec](https://agentskills.io).
@@ -41,7 +43,7 @@ npm install @franlol/opencode-md-table-formatter
 Add to your `.opencode/opencode.jsonc`:
 ```json
 {
-  "plugin": ["@franlol/opencode-md-table-formatter@latest"]
+  "plugins": ["@franlol/opencode-md-table-formatter@latest"]
 }
 ```
 
@@ -58,7 +60,7 @@ fix-tables.js {filename} && npx markdownlint-cli2 {filename} --fix
 To format all .md files in current directory:
 
 ```bash
-uvx --with mdformat-gfm mdformat --extensions gfm --wrap=80 .
+npx --package mdformat-gfm mdformat --extensions gfm --wrap=80 .
 ```
 
 ## Approach 2: markdownlint (Alternative)
@@ -68,7 +70,7 @@ Uses `markdownlint-cli2` for linting with comprehensive GFM rules.
 ### Lint Command
 
 ```bash
-uvx markdownlint-cli2 {filename} --fix
+npx markdownlint-cli2 {filename} --fix
 ```
 
 ### Recommended: Two-Step Pipeline
@@ -76,7 +78,7 @@ uvx markdownlint-cli2 {filename} --fix
 For best results, use both tools in sequence:
 
 ```bash
-fix-tables.js {filename} && uvx markdownlint-cli2 {filename} --fix
+fix-tables.js {filename} && npx markdownlint-cli2 {filename} --fix
 ```
 
 Step 1 normalizes table separators (mdformat misses this).
@@ -149,7 +151,7 @@ All markdown must follow these rules:
 ### After Creating a New File
 
 1. Write the markdown content
-2. Run: `uvx --with mdformat-gfm mdformat --extensions gfm --wrap=80 {filename}`
+2. Run: `npx --package mdformat-gfm mdformat --extensions gfm --wrap=80 {filename}`
 3. Verify the formatted output
 4. Stage and commit
 
@@ -157,17 +159,17 @@ All markdown must follow these rules:
 
 1. Write the markdown content
 2. Run table fix: `fix-tables.js {filename}`
-3. Run lint: `uvx markdownlint-cli2 {filename} --fix`
+3. Run lint: `npx markdownlint-cli2 {filename} --fix`
 4. Stage and commit
 
 ### Batch Fix All Markdown
 
 ```bash
 # mdformat
-find . -name "*.md" -exec uvx --with mdformat-gfm mdformat --extensions gfm --wrap=80 {} \;
+find . -name "*.md" -exec npx --package mdformat-gfm mdformat --extensions gfm --wrap=80 {} \;
 
 # or markdownlint
-find . -name "*.md" -exec uvx markdownlint-cli2 {} --fix \;
+find . -name "*.md" -exec npx markdownlint-cli2 {} --fix \;
 ```
 
 ## fix-tables.js
@@ -216,7 +218,7 @@ Use `npx` as fallback:
 
 ```bash
 npx markdownlint-cli2 {filename} --fix
-npx --package mdformat --exec mdformat --extensions gfm --wrap=80 {filename}
+npx --package mdformat-gfm mdformat --extensions gfm --wrap=80 {filename}
 ```
 
 ### MD013: line too long
@@ -224,7 +226,7 @@ npx --package mdformat --exec mdformat --extensions gfm --wrap=80 {filename}
 Enable line wrapping with mdformat:
 
 ```bash
-uvx --with mdformat-gfm mdformat --extensions gfm --wrap=80 {filename}
+npx --package mdformat-gfm mdformat --extensions gfm --wrap=80 {filename}
 ```
 
 ### MD033: inline HTML not allowed
@@ -242,7 +244,7 @@ Add to `.markdownlint.json`:
 Use the two-step pipeline:
 
 ```bash
-fix-tables.js {filename} && uvx markdownlint-cli2 {filename} --fix
+fix-tables.js {filename} && npx markdownlint-cli2 {filename} --fix
 ```
 
 ### "Cannot find fix-tables.js"
@@ -280,5 +282,5 @@ cp ~/.config/opencode/skills/markdown-formatter/references/.markdownlint.json ./
 Or pass explicitly:
 
 ```bash
-uvx markdownlint-cli2 --config ~/.config/opencode/skills/markdown-formatter/references/.markdownlint.json {filename} --fix
+npx markdownlint-cli2 --config ~/.config/opencode/skills/markdown-formatter/references/.markdownlint.json {filename} --fix
 ```
