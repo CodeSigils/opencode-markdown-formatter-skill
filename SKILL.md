@@ -51,16 +51,7 @@ This formats tables automatically after AI text completion with proper alignment
 
 ### Alternative: CLI Tool
 
-For batch processing or CI/CD pipelines:
-
-```bash
-# Use package.json scripts (requires npm install)
-npm install
-npm run format -- {filename}
-npm run format:all
-```
-
-Or run directly without install:
+For batch processing or CI/CD pipelines (no install required):
 
 ```bash
 node references/fix-tables.js {filename} && npx markdownlint-cli2 {filename} --fix
@@ -81,7 +72,7 @@ npx markdownlint-cli2 {filename} --fix
 For best results, use both tools in sequence:
 
 ```bash
-npm run format -- {filename}
+node references/fix-tables.js {filename} && npx markdownlint-cli2 {filename} --fix
 ```
 
 Step 1 normalizes table separators (mdformat misses this).
@@ -154,21 +145,20 @@ All markdown must follow these rules:
 ### After Creating a New File
 
 1. Write the markdown content
-2. Run: `npm run format -- {filename}` (or use direct commands below)
+2. Run: `node references/fix-tables.js {filename} && npx markdownlint-cli2 {filename} --fix`
 3. Verify the formatted output
 4. Stage and commit
 
 ### Recommended: Full Pipeline
 
 1. Write the markdown content
-2. Install: `npm install`
-3. Run: `npm run format -- {filename}`
-4. Stage and commit
+2. Run: `node references/fix-tables.js {filename} && npx markdownlint-cli2 {filename} --fix`
+3. Stage and commit
 
 ### Batch Fix All Markdown
 
 ```bash
-npm run format:all
+find . -name "*.md" -exec node references/fix-tables.js {} \; && npx markdownlint-cli2 . --fix
 ```
 
 ## fix-tables.js
@@ -186,14 +176,17 @@ Normalizes table separators from old-style `|------|------|` to GFM-compliant `|
 ### Usage
 
 ```bash
-# Using npm scripts (requires npm install)
-npm run format -- notes/file.md    # Tables + lint
-npm run format:all             # All .md files
-npm run format:table -- notes/file.md    # Tables only
-
-# Direct commands (no install)
+# Fix specific file
 node references/fix-tables.js notes/file.md
+
+# Fix all .md in directory
+node references/fix-tables.js --all .
+
+# Check only (exit non-zero if fixes needed)
 node references/fix-tables.js --check notes/file.md
+
+# Verbose output
+node references/fix-tables.js -v notes/file.md
 ```
 
 ### How It Works
@@ -207,11 +200,7 @@ node references/fix-tables.js --check notes/file.md
 
 ### MD013: line too long
 
-Enable line wrapping with mdformat:
-
-```bash
-npx mdformat --extensions gfm --wrap=80 {filename}
-```
+Disable MD013 in `.markdownlint.json` or use `npx mdformat --extensions gfm --wrap=80 {filename}` instead.
 
 ### MD033: inline HTML not allowed
 
