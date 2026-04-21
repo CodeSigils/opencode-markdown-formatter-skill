@@ -57,6 +57,14 @@ For batch processing or CI/CD pipelines, use the CLI:
 fix-tables.js {filename} && npx markdownlint-cli2 {filename} --fix
 ```
 
+Or use npm scripts (recommended - combines both tools):
+
+```bash
+npm install
+npm run format -- {filename}
+npm run format:all
+```
+
 To format all .md files in current directory:
 
 ```bash
