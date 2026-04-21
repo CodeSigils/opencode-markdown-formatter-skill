@@ -51,21 +51,21 @@ This formats tables automatically after AI text completion with proper alignment
 
 ### Alternative: CLI Tool
 
-For batch processing or CI/CD pipelines, use npx (no install required):
+For batch processing or CI/CD pipelines:
 
 ```bash
-# Fix tables first, then lint (recommended)
-npx fix-tables.js {filename} && npx markdownlint-cli2 {filename} --fix
+# From skill directory - fix tables first, then lint (recommended)
+node references/fix-tables.js {filename} && npx markdownlint-cli2 {filename} --fix
 
-# Or use npx for both tools
-npx fix-tables.js {filename}
+# Run individually
+node references/fix-tables.js {filename}
 npx markdownlint-cli2 {filename} --fix
 ```
 
 To format all .md files in current directory:
 
 ```bash
-find . -name "*.md" -exec npx fix-tables.js {} \; && npx markdownlint-cli2 . --fix
+find . -name "*.md" -exec node references/fix-tables.js {} \; && npx markdownlint-cli2 . --fix
 ```
 
 ## Approach 2: markdownlint (Alternative)
@@ -83,7 +83,7 @@ npx markdownlint-cli2 {filename} --fix
 For best results, use both tools in sequence:
 
 ```bash
-fix-tables.js {filename} && npx markdownlint-cli2 {filename} --fix
+node references/fix-tables.js {filename} && npx markdownlint-cli2 {filename} --fix
 ```
 
 Step 1 normalizes table separators (mdformat misses this).
@@ -156,25 +156,21 @@ All markdown must follow these rules:
 ### After Creating a New File
 
 1. Write the markdown content
-2. Run: `npx --package mdformat-gfm mdformat --extensions gfm --wrap=80 {filename}`
+2. Run: `node references/fix-tables.js {filename} && npx markdownlint-cli2 {filename} --fix`
 3. Verify the formatted output
 4. Stage and commit
 
 ### Recommended: Full Pipeline
 
 1. Write the markdown content
-2. Run table fix: `fix-tables.js {filename}`
+2. Run table fix: `node references/fix-tables.js {filename}`
 3. Run lint: `npx markdownlint-cli2 {filename} --fix`
 4. Stage and commit
 
 ### Batch Fix All Markdown
 
 ```bash
-# mdformat
-find . -name "*.md" -exec npx --package mdformat-gfm mdformat --extensions gfm --wrap=80 {} \;
-
-# or markdownlint
-find . -name "*.md" -exec npx markdownlint-cli2 {} --fix \;
+find . -name "*.md" -exec node references/fix-tables.js {} \; && npx markdownlint-cli2 . --fix
 ```
 
 ## fix-tables.js
@@ -193,19 +189,19 @@ Normalizes table separators from old-style `|------|------|` to GFM-compliant `|
 
 ```bash
 # Fix specific file
-fix-tables.js notes/file.md
+node references/fix-tables.js notes/file.md
 
 # Fix all .md in directory
-fix-tables.js --all notes/
+node references/fix-tables.js --all notes/
 
 # Check only (exit non-zero if fixes needed)
-fix-tables.js --check notes/file.md
+node references/fix-tables.js --check notes/file.md
 
 # Output to stdout
-fix-tables.js --stdout < file.md
+node references/fix-tables.js --stdout < file.md
 
 # Verbose output
-fix-tables.js -v notes/file.md
+node references/fix-tables.js -v notes/file.md
 ```
 
 ### How It Works
@@ -222,7 +218,7 @@ fix-tables.js -v notes/file.md
 Enable line wrapping with mdformat:
 
 ```bash
-npx --package mdformat-gfm mdformat --extensions gfm --wrap=80 {filename}
+npx mdformat --extensions gfm --wrap=80 {filename}
 ```
 
 ### MD033: inline HTML not allowed
@@ -240,15 +236,15 @@ Add to `.markdownlint.json`:
 Use the two-step pipeline:
 
 ```bash
-fix-tables.js {filename} && npx markdownlint-cli2 {filename} --fix
+node references/fix-tables.js {filename} && npx markdownlint-cli2 {filename} --fix
 ```
 
 ### "Cannot find fix-tables.js"
 
-Ensure it's in your PATH or use the full path:
+Use `node` to run the local script:
 
 ```bash
-~/.config/opencode/skills/markdown-formatter/references/fix-tables.js notes/file.md
+node references/fix-tables.js notes/file.md
 ```
 
 ## Quick Reference
