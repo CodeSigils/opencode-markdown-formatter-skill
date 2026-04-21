@@ -69,7 +69,8 @@ When the skill is active, the AI will format markdown like this:
 
 | Feature | Before | After |
 |---------|--------|-------|
-| Table separator | `\|------\|------\|` | `\| :--- \| :--- \|` |
+| Table separator | `\|------\|------\|` | `\| :--- \| :--- \|` (auto-widths) |
+| Table column width | `\|h1\|h2\|` | `\| h1 \| h2 \|` (matches header) |
 | Heading | `#Title` | `# Title` |
 | Link | `https://url` | `[text](https://url)` |
 | List | `* Item` | `- Item` |
@@ -79,6 +80,7 @@ When the skill is active, the AI will format markdown like this:
 - **Skill**: Provides AI with GFM formatting instructions
 - **CLI**: Batch processing for CI/CD workflows (`fix-tables.js`)
 - **Plugin alternative**: Community plugin for live formatting
+- **Auto-width tables**: Separator widths match header column lengths (like Emacs org-mode)
 - **Preserves idempotent changes**: Skips already-correct files
 
 ## Requirements
