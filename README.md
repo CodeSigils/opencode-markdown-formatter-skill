@@ -57,8 +57,8 @@ For CI/CD pipelines or manual batch processing (no install required):
 git clone https://github.com/CodeSigils/opencode-markdown-formatter-skill.git
 cd opencode-markdown-formatter-skill
 
-# Run npx (downloads tools on first run)
-npx fix-tables.js README.md && npx markdownlint-cli2 README.md --fix
+# Run directly (no install required)
+node references/fix-tables.js README.md && npx markdownlint-cli2 README.md --fix
 ```
 
 **Note:** `fix-tables.js` handles table separators only. `markdownlint-cli2` handles all other GFM rules (headings, lists, code blocks, links, etc.).
@@ -88,24 +88,17 @@ When the skill is active, the AI will format markdown like this:
 
 ## npm Scripts (Optional)
 
-If you install dependencies (`npm install`), these scripts are available:
+If you install dependencies, these scripts are available:
 
 ```bash
-# Format single file (tables + lint) - RECOMMENDED
-npm run format -- README.md
-
-# Format all .md files in current directory
+npm run format -- {filename}
 npm run format:all
-
-# Or run individually:
-npm run format:table -- file.md     # Tables only
-npm run format:lint -- file.md      # Lint only
 ```
 
-**Alternatively, use npx directly (no install required):**
+## Direct Commands (No Install Required)
 
 ```bash
-npx fix-tables.js README.md && npx markdownlint-cli2 README.md --fix
+node references/fix-tables.js {filename} && npx markdownlint-cli2 {filename} --fix
 ```
 
 ## fix-tables.js CLI Reference
