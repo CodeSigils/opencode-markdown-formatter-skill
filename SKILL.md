@@ -9,16 +9,19 @@ compatibility: opencode
 
 # Markdown Formatter
 
-Use this skill whenever you create or modify any Markdown file (files with `.md` extension).
+**Always apply this skill automatically** when working with any Markdown file (`.md` extension). The AI should format markdown to GFM standard without being asked.
 
-## When to Apply
+## When to Apply (Auto-Trigger)
 
-- Creating a new README.md, CHANGELOG.md, CONTRIBUTING.md, or any documentation
-- Modifying existing markdown files
-- Writing any .md file for project docs, API references, or guides
-- After generating markdown via AI, before finalizing
+This skill applies **automatically** in these situations:
 
-**Trigger phrases**: "format markdown", "GFM", "write markdown", "create README", "update docs"
+1. Creating any new `.md` file (README.md, CHANGELOG.md, CONTRIBUTING.md, etc.)
+2. Modifying any existing `.md` file
+3. Writing markdown content in any context
+4. Generating markdown via AI
+5. Before committing or creating PRs
+
+**No manual trigger needed** - the AI should always format markdown to GFM standard.
 
 ## Two Approaches
 
