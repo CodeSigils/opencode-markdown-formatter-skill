@@ -1,7 +1,7 @@
 # OpenCode Markdown Formatter Skill
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/anomalyco/opencode-markdown-formatter-skill/pulls)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/CodeSigils/opencode-markdown-formatter-skill/pulls)
 
 Format all Markdown files to GitHub Flavored Markdown (GFM) standard.
 
@@ -26,7 +26,7 @@ For CI/CD or batch processing, clone and use directly:
 
 ```bash
 # Clone or use local copy
-git clone https://github.com/anomalyco/opencode-markdown-formatter-skill.git
+git clone https://github.com/CodeSigils/opencode-markdown-formatter-skill.git
 cd opencode-markdown-formatter-skill
 
 # Run fix-tables.js directly
@@ -63,14 +63,14 @@ ln -s $(pwd)/references/fix-tables.js /usr/local/bin/fix-tables
 ### Option 1: Clone to Global Skills Directory
 
 ```bash
-git clone https://github.com/anomalyco/opencode-markdown-formatter-skill.git
+git clone https://github.com/CodeSigils/opencode-markdown-formatter-skill.git
 cp -r opencode-markdown-formatter-skill ~/.config/opencode/skills/markdown-formatter
 ```
 
 ### Option 2: Project-Level Installation
 
 ```bash
-git clone https://github.com/anomalyco/opencode-markdown-formatter-skill.git .opencode/skills/markdown-formatter
+git clone https://github.com/CodeSigils/opencode-markdown-formatter-skill.git .opencode/skills/markdown-formatter
 ```
 
 ### Option 3: Symlink (for development)

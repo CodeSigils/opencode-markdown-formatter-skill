@@ -7,7 +7,7 @@ Thank you for your interest in improving the markdown-formatter skill.
 Clone and symlink for development:
 
 ```bash
-git clone https://github.com/anomalyco/opencode-markdown-formatter-skill.git
+git clone https://github.com/CodeSigils/opencode-markdown-formatter-skill.git
 ln -s "$(pwd)" ~/.config/opencode/skills/markdown-formatter
 ```
 
