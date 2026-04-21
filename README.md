@@ -20,17 +20,20 @@ Add to `.opencode/opencode.jsonc`:
 }
 ```
 
-## Quick Start (CLI Alternative)
+## CLI Alternative (Batch Processing)
+
+For CI/CD or batch processing, clone and use directly:
 
 ```bash
-# Install (symlink for development)
-ln -s ~/projects/opencode-markdown-formatter-skill ~/.config/opencode/skills/markdown-formatter
+# Clone or use local copy
+git clone https://github.com/anomalyco/opencode-markdown-formatter-skill.git
+cd opencode-markdown-formatter-skill
 
-# Format a file
-npx markdownlint-cli2 README.md --fix
+# Run fix-tables.js directly
+node references/fix-tables.js README.md
 
-# Full pipeline (includes table fixing)
-fix-tables.js README.md && npx markdownlint-cli2 README.md --fix
+# Or add to PATH
+ln -s $(pwd)/references/fix-tables.js /usr/local/bin/fix-tables
 ```
 
 ## What It Does

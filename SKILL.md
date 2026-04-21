@@ -1,6 +1,6 @@
 ---
 name: markdown-formatter
-description: Format all markdown files to GitHub Flavored Markdown (GFM) standard. Use this skill whenever creating or updating any .md file including README.md, CHANGELOG.md, CONTRIBUTING.md, API docs, or any documentation. Make sure to apply GFM formatting after writing any markdown, especially before committing or creating PRs.
+description: Format markdown to GFM standard. Use the @franlol/opencode-md-table-formatter plugin for live formatting, or fix-tables.js CLI for batch processing. Trigger on any .md file creation or modification.
 license: MIT
 compatibility: opencode
 ---
