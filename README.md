@@ -56,12 +56,16 @@ For CI/CD pipelines or manual batch processing:
 # Clone the repository
 git clone https://github.com/CodeSigils/opencode-markdown-formatter-skill.git
 cd opencode-markdown-formatter-skill
+npm install
 
 # Run fix-tables.js (table separators)
 node references/fix-tables.js README.md
 
 # Run markdownlint (full GFM formatting)
 npx markdownlint-cli2 README.md --fix
+
+# Or use npm scripts (recommended)
+npm run format -- README.md
 ```
 
 **Note:** `fix-tables.js` handles table separators only. `markdownlint-cli2` handles all other GFM rules (headings, lists, code blocks, links, etc.).
@@ -88,6 +92,23 @@ When the skill is active, the AI will format markdown like this:
 
 - [OpenCode](https://opencode.ai) installed
 - Node.js 18+ (for CLI tool or plugin)
+- Run `npm install` in the skill directory to enable npm scripts
+
+## npm Scripts (Recommended)
+
+After installing dependencies (`npm install`), use these scripts:
+
+```bash
+# Format single file (tables + lint) - RECOMMENDED
+npm run format -- README.md
+
+# Format all .md files in current directory
+npm run format:all
+
+# Or run individually:
+npm run format:table -- file.md     # Tables only
+npm run format:lint -- file.md      # Lint only
+```
 
 ## fix-tables.js CLI Reference
 
@@ -137,14 +158,15 @@ markdown-formatter/
 ├── SKILL.md                    # Skill definition (for OpenCode)
 ├── README.md                   # This file
 ├── CONTRIBUTING.md             # Contribution guidelines
-├── LICENSE                     # MIT license
-├── test-js.mjs                 # JavaScript tests
-├── test-kitchensink.md         # Test data
+├── LICENSE                   # MIT license
+├── package.json              # npm scripts for convenience
+├── test-js.mjs             # JavaScript tests
+├── test-kitchensink.md     # Test data
 ├── references/
-│   ├── fix-tables.js          # Table separator normalizer (CLI)
-│   └── .markdownlint.json     # Lint configuration
+│   ├── fix-tables.js      # Table separator normalizer (CLI)
+│   └── .markdownlint.json # Lint configuration
 └── .github/workflows/
-    └── ci.yml                 # CI/CD pipeline
+    └── ci.yml             # CI/CD pipeline
 ```
 
 ## License
