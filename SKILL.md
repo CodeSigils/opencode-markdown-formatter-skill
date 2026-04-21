@@ -51,24 +51,21 @@ This formats tables automatically after AI text completion with proper alignment
 
 ### Alternative: CLI Tool
 
-For batch processing or CI/CD pipelines, use the CLI:
+For batch processing or CI/CD pipelines, use npx (no install required):
 
 ```bash
-fix-tables.js {filename} && npx markdownlint-cli2 {filename} --fix
-```
+# Fix tables first, then lint (recommended)
+npx fix-tables.js {filename} && npx markdownlint-cli2 {filename} --fix
 
-Or use npm scripts (recommended - combines both tools):
-
-```bash
-npm install
-npm run format -- {filename}
-npm run format:all
+# Or use npx for both tools
+npx fix-tables.js {filename}
+npx markdownlint-cli2 {filename} --fix
 ```
 
 To format all .md files in current directory:
 
 ```bash
-npx --package mdformat-gfm mdformat --extensions gfm --wrap=80 .
+find . -name "*.md" -exec npx fix-tables.js {} \; && npx markdownlint-cli2 . --fix
 ```
 
 ## Approach 2: markdownlint (Alternative)

@@ -1,11 +1,11 @@
 {
   "name": "markdown-formatter",
   "version": "1.0.0",
-  "description": "Tools for formatting Markdown to GFM standard",
+  "description": "Tools for formatting Markdown to GFM standard (requires npm install)",
   "scripts": {
-    "format": "fix-tables.js && npx markdownlint-cli2 --fix",
-    "format:table": "fix-tables.js",
-    "format:table:all": "fix-tables.js --all .",
+    "format": "node references/fix-tables.js && npx markdownlint-cli2 --fix",
+    "format:table": "node references/fix-tables.js",
+    "format:table:all": "node references/fix-tables.js --all .",
     "format:lint": "npx markdownlint-cli2 --fix",
     "format:lint:all": "npx markdownlint-cli2 . --fix"
   },
