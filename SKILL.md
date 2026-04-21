@@ -57,16 +57,6 @@ For batch processing or CI/CD pipelines (no install required):
 node references/fix-tables.js {filename} && npx markdownlint-cli2 {filename} --fix
 ```
 
-## Approach 2: markdownlint (Alternative)
-
-Uses `markdownlint-cli2` for linting with comprehensive GFM rules.
-
-### Lint Command
-
-```bash
-npx markdownlint-cli2 {filename} --fix
-```
-
 ### Recommended: Two-Step Pipeline
 
 For best results, use both tools in sequence:
@@ -77,12 +67,6 @@ node references/fix-tables.js {filename} && npx markdownlint-cli2 {filename} --f
 
 Step 1 normalizes table separators (mdformat misses this).
 Step 2 fixes everything else.
-
-| Tool | Strength |
-|------|----------|
-| @franlol/opencode-md-table-formatter | Auto-formats tables after AI generation (recommended) |
-| markdownlint | Catches MD001-MD045 rules |
-| fix-tables.js | CLI for batch processing / CI-CD |
 
 ## GFM Requirements
 
@@ -214,10 +198,10 @@ Add to `.markdownlint.json`:
 
 ### Tables not rendering correctly
 
-Use the npm script:
+Use the two-step pipeline:
 
 ```bash
-npm run format -- {filename}
+node references/fix-tables.js {filename} && npx markdownlint-cli2 {filename} --fix
 ```
 
 ## Quick Reference
