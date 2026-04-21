@@ -86,6 +86,16 @@ All markdown must follow these rules:
 
 10. **Blank lines**: Single blank line between block elements
 
+12. **Horizontal Rules**: Use `---` (three dashes)
+    - Not `***` or `___` (mdformat normalizes these)
+
+11. **Blockquotes**: Use `>` without blank lines inside
+    ```markdown
+    > This is a blockquote
+    > Continues on next line
+    > No blank lines in blockquotes
+    ```
+
 ### Workflow
 
 1. Write the markdown content
