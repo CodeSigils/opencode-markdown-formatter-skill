@@ -20,37 +20,55 @@ Use this skill whenever you create or modify any Markdown file (files with `.md`
 
 **Trigger phrases**: "format markdown", "GFM", "write markdown", "create README", "update docs"
 
-## Tool
+## Two Approaches
 
-Uses `markdownlint-cli2` via `npx` for linting and auto-fixing GFM rules.
+This skill supports two complementary tools:
 
-### Quick Command
+1. **mdformat** - Formats markdown to GFM standard (primary)
+2. **markdownlint** - Lints and fixes GFM rules (alternative)
+
+## Approach 1: mdformat (Primary)
+
+Uses `mdformat` with GFM extensions for automatic formatting.
+
+### Format Command
 
 ```bash
-npx markdownlint-cli2 {filename} --fix
+uvx --with mdformat-gfm mdformat --extensions gfm --wrap=80 {filename}
 ```
 
 To format all .md files in current directory:
 
 ```bash
-npx markdownlint-cli2 . --fix
+uvx --with mdformat-gfm mdformat --extensions gfm --wrap=80 .
 ```
 
-### Two-Step Pipeline (Recommended)
+## Approach 2: markdownlint (Alternative)
 
-For docs with tables, use both tools in sequence:
+Uses `markdownlint-cli2` for linting with comprehensive GFM rules.
+
+### Lint Command
 
 ```bash
-fix-tables.py {filename} && npx markdownlint-cli2 {filename} --fix
+uvx markdownlint-cli2 {filename} --fix
 ```
 
-Step 1 normalizes table separators to `| :--- | :--- |` left-aligned style.
+### Recommended: Two-Step Pipeline
+
+For best results, use both tools in sequence:
+
+```bash
+fix-tables.js {filename} && uvx markdownlint-cli2 {filename} --fix
+```
+
+Step 1 normalizes table separators (mdformat misses this).
 Step 2 fixes everything else.
 
-| Tool | Purpose |
-|------|---------|
-| fix-tables.py | Normalize table separator alignment |
-| markdownlint | Fix all GFM rules (MD001-MD045) |
+| Tool | Strength |
+|------|----------|
+| mdformat | Formats consistently, wraps lines |
+| markdownlint | Catches MD001-MD045 rules |
+| fix-tables.js | Normalizes table separators |
 
 ## GFM Requirements
 
@@ -113,24 +131,28 @@ All markdown must follow these rules:
 ### After Creating a New File
 
 1. Write the markdown content
-2. Run: `npx markdownlint-cli2 {filename} --fix`
+2. Run: `uvx --with mdformat-gfm mdformat --extensions gfm --wrap=80 {filename}`
 3. Verify the formatted output
 4. Stage and commit
 
 ### Recommended: Full Pipeline
 
 1. Write the markdown content
-2. Run table fix: `fix-tables.py {filename}`
-3. Run lint: `npx markdownlint-cli2 {filename} --fix`
+2. Run table fix: `fix-tables.js {filename}`
+3. Run lint: `uvx markdownlint-cli2 {filename} --fix`
 4. Stage and commit
 
 ### Batch Fix All Markdown
 
 ```bash
-find . -name "*.md" -exec npx markdownlint-cli2 {} --fix \;
+# mdformat
+find . -name "*.md" -exec uvx --with mdformat-gfm mdformat --extensions gfm --wrap=80 {} \;
+
+# or markdownlint
+find . -name "*.md" -exec uvx markdownlint-cli2 {} --fix \;
 ```
 
-## fix-tables.py
+## fix-tables.js
 
 Normalizes table separators from old-style `|------|------|` to GFM-compliant `| :--- | :--- |` style.
 
@@ -139,28 +161,79 @@ Normalizes table separators from old-style `|------|------|` to GFM-compliant `|
 ### Location
 
 ```
-~/.config/opencode/skills/markdown-formatter/references/fix-tables.py
+~/.config/opencode/skills/markdown-formatter/references/fix-tables.js
 ```
 
 ### Usage
 
 ```bash
 # Fix specific file
-fix-tables.py notes/file.md
+fix-tables.js notes/file.md
 
 # Fix all .md in directory
-fix-tables.py --all notes/
+fix-tables.js --all notes/
 
-# Dry-run (shows what would change)
-fix-tables.py --dry notes/file.md
+# Check only (exit non-zero if fixes needed)
+fix-tables.js --check notes/file.md
+
+# Output to stdout
+fix-tables.js --stdout < file.md
+
+# Verbose output
+fix-tables.js -v notes/file.md
 ```
 
 ### How It Works
 
 1. Scans for table separator lines (`|---|---|` pattern)
-2. Counts columns from header row
-3. Replaces with proper `| --- | --- |` format (left-aligned)
+2. Detects already-correct separators (`:---`) and skips them
+3. Replaces with `| :--- |` format (left-aligned)
 4. Leaves data rows untouched
+
+## Troubleshooting
+
+### "uvx: command not found"
+
+Use `npx` as fallback:
+
+```bash
+npx markdownlint-cli2 {filename} --fix
+npx --package mdformat --exec mdformat --extensions gfm --wrap=80 {filename}
+```
+
+### MD013: line too long
+
+Enable line wrapping with mdformat:
+
+```bash
+uvx --with mdformat-gfm mdformat --extensions gfm --wrap=80 {filename}
+```
+
+### MD033: inline HTML not allowed
+
+Add to `.markdownlint.json`:
+
+```json
+{
+  "MD033": { "allowed_elements": ["details", "summary", "br"] }
+}
+```
+
+### Tables not rendering correctly
+
+Use the two-step pipeline:
+
+```bash
+fix-tables.js {filename} && uvx markdownlint-cli2 {filename} --fix
+```
+
+### "Cannot find fix-tables.js"
+
+Ensure it's in your PATH or use the full path:
+
+```bash
+~/.config/opencode/skills/markdown-formatter/references/fix-tables.js notes/file.md
+```
 
 ## Quick Reference
 
@@ -169,9 +242,9 @@ fix-tables.py --dry notes/file.md
 | Heading | `# Title` |
 | Bold | `**bold**` |
 | Italic | `_italic_` |
-| Code block | ``` `lang` |
+| Code block | ```` `lang` |
 | Link | `[text](url)` |
-| Table | `| col |` + `| :--- |` |
+| Table | `\| col \|` + `\| :--- \|` |
 | Task list | `- [ ] task` |
 
 ## Configuration
@@ -189,5 +262,5 @@ cp ~/.config/opencode/skills/markdown-formatter/references/.markdownlint.json ./
 Or pass explicitly:
 
 ```bash
-npx markdownlint-cli2 --config ~/.config/opencode/skills/markdown-formatter/references/.markdownlint.json {filename} --fix
+uvx markdownlint-cli2 --config ~/.config/opencode/skills/markdown-formatter/references/.markdownlint.json {filename} --fix
 ```

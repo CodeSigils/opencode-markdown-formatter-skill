@@ -1,52 +1,63 @@
 # OpenCode Markdown Formatter Skill
 
-A community skill for [OpenCode](https://opencode.ai) that formats all Markdown files to GitHub Flavored Markdown (GFM) standard.
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/anomalyco/opencode-markdown-formatter-skill/pulls)
+
+Format all Markdown files to GitHub Flavored Markdown (GFM) standard.
+
+## Quick Start
+
+```bash
+# Install (symlink for development)
+ln -s ~/projects/opencode-markdown-formatter-skill ~/.config/opencode/skills/markdown-formatter
+
+# Format a file
+npx markdownlint-cli2 README.md --fix
+
+# Full pipeline (includes table fixing)
+fix-tables.js README.md && npx markdownlint-cli2 README.md --fix
+```
 
 ## What It Does
 
-This skill automatically formats any Markdown file to follow GitHub Flavored Markdown conventions. It uses `markdownlint-cli2` via `npx` to ensure consistent, clean Markdown that renders properly on GitHub, GitLab, and other platforms.
+| Feature | Before | After |
+|---------|--------|-------|
+| Table separator | `\|------\|------\|` | `\| :--- \| :--- \|` |
+| Heading | `#Title` | `# Title` |
+| Link | `https://url` | `[text](https://url)` |
+| List | `* Item` | `- Item` |
 
-### Features
+## Features
 
 - **Automatic GFM formatting** - Ensures all markdown follows GitHub Flavored Markdown standard
-- **Headings** - Validates ATX style (`#`, `##`, `###`) with proper spacing
-- **Lists** - Consistent unordered (`-`) and ordered (`1.`) list formatting
-- **Code blocks** - Proper fenced code blocks with language identifiers
-- **Links** - Validates `[text](url)` format, no bare URLs
-- **Tables** - Proper GFM table syntax with alignment
-- **Emphasis** - Consistent bold (`**`) and italic (`_`) usage
-- **No trailing whitespace** - Removes trailing spaces automatically
+- **Two-step pipeline** - Fixes tables first, then lints everything else
+- **Preserves already-correct files** - Skips idempotent changes
+- **CLI flags** - `--check`, `--stdout`, `--verbose`, `--all`
 
 ## Requirements
 
 - [OpenCode](https://opencode.ai) installed
 - Node.js (for running markdownlint via npx)
 
-The skill uses `npx` to run markdownlint on-demand, so no persistent installation needed.
 
 ## Installation
 
 ### Option 1: Clone to Global Skills Directory
 
 ```bash
-# Clone the repository
 git clone https://github.com/anomalyco/opencode-markdown-formatter-skill.git
-
-# Copy to OpenCode global skills directory
 cp -r opencode-markdown-formatter-skill ~/.config/opencode/skills/markdown-formatter
 ```
 
 ### Option 2: Project-Level Installation
 
 ```bash
-# Clone into your project's .opencode/skills directory
 git clone https://github.com/anomalyco/opencode-markdown-formatter-skill.git .opencode/skills/markdown-formatter
 ```
 
 ### Option 3: Symlink (for development)
 
 ```bash
-# Create symlink to the cloned repository
 ln -s ~/projects/opencode-markdown-formatter-skill ~/.config/opencode/skills/markdown-formatter
 ```
 
@@ -62,41 +73,46 @@ The skill automatically triggers when you create or modify any `.md` file.
 
 ### Format Command
 
-The skill runs this command to format Markdown files:
-
 ```bash
 npx markdownlint-cli2 {filename} --fix
 ```
 
-### Example Workflow
-
-1. Create or edit a Markdown file in OpenCode
-2. The skill automatically detects the .md file
-3. After writing, run: `npx markdownlint-cli2 yourfile.md --fix`
-4. The file is automatically formatted to GFM standard
-
-## Two-Step Pipeline (Recommended)
-
-For docs with tables, use both fix-tables.py and markdownlint:
+### Two-Step Pipeline (Recommended)
 
 ```bash
-fix-tables.py {filename} && npx markdownlint-cli2 {filename} --fix
+fix-tables.js {filename} && npx markdownlint-cli2 {filename} --fix
 ```
 
-Step 1 normalizes table separators. Step 2 fixes everything else.
+### Batch Fix All Markdown
 
-## Skills Directory
+```bash
+find . -name "*.md" -exec npx markdownlint-cli2 {} --fix \;
+```
 
-OpenCode searches for skills in these locations (in priority order):
+## fix-tables.js
 
-1. Project: `.opencode/skills/<skill-name>/`
-2. Global: `~/.config/opencode/skills/<skill-name>/`
+Normalizes table separators. markdownlint has no built-in rule for this.
+
+```bash
+# Fix specific file
+fix-tables.js notes/file.md
+
+# Fix all .md in directory
+fix-tables.js --all notes/
+
+# Check only (exit non-zero if fixes needed)
+fix-tables.js --check notes/file.md
+
+# Output to stdout
+fix-tables.js --stdout < file.md
+```
 
 ## Troubleshooting
 
 ### "npx: command not found"
 
 Install Node.js:
+
 ```bash
 # macOS/Homebrew
 brew install node
@@ -108,43 +124,45 @@ sudo apt-get install nodejs npm
 ### Skill not loading
 
 Verify the skill directory is in the correct location:
+
 ```bash
 ls -la ~/.config/opencode/skills/markdown-formatter/SKILL.md
 ```
 
+## Testing
+
+```bash
+node --test test-js.mjs
+```
+
 ## Related Skills
 
-- [code-review-checklist](https://github.com/anomalyco/opencode-code-review-checklist) - Python code review checklist
+- [code-review-checklist](https://github.com/anomalyco/opencode-code-review-checklist) - Code review checklist
 - [skill-creator](https://github.com/anomalyco/opencode-skill-creator) - Create and test OpenCode skills
 
-## Skill Development Best Practices
+## Skill Development
 
 This skill follows the [official skill specification](https://open-code.ai/docs/en/skills):
 
 - **Naming**: kebab-case, lowercase letters and numbers only
 - **Description**: Include both what the skill does AND when to trigger
 - **Progressive Disclosure**: Keep SKILL.md under 500 lines
-- **Frontmatter**: Only required fields (`name`, `description`) + optional (`license`, `compatibility`)
-
-### Three-Level Loading System
-
-OpenCode loads skills progressively:
-
-1. **Metadata** (name + description) - Always in context (~100 tokens)
-2. **SKILL.md body** - Loaded when skill triggers (<500 lines ideal)
-3. **Bundled resources** - As needed (scripts, references)
+- **Three-Level Loading**: Metadata → SKILL.md body → Bundled resources
 
 ### Directory Structure
 
 ```
 markdown-formatter/
 ├── SKILL.md           # Required: skill definition
-├── references/        # Optional: additional resources
-│   ├── fix-tables.py  # Table separator normalizer
+├── README.md          # User-facing documentation
+├── CONTRIBUTING.md    # Contribution guidelines
+├── test-js.mjs        # JavaScript tests
+├── references/        # Additional resources
+│   ├── fix-tables.js  # Table separator normalizer (Node.js)
 │   └── .markdownlint.json  # Lint configuration
+└── .github/workflows/  # CI/CD
+    └── ci.yml
 ```
-
-See [Best Practices Guide](https://open-code.ai/docs/en/skills) for more.
 
 ## Official Documentation
 
@@ -155,10 +173,6 @@ See [Best Practices Guide](https://open-code.ai/docs/en/skills) for more.
 ## License
 
 MIT License - see [LICENSE](LICENSE) file.
-
-## Contributing
-
-Contributions welcome! Please open an issue or pull request on GitHub.
 
 ## Acknowledgments
 
