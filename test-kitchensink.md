@@ -190,4 +190,4 @@ ______________________________________________________________________
 
 End of Kitchen Sink Test File
 
-[opencode-doc]: https://open-code.ai/docs/en/skills
+[opencode-doc]: https://opencode.ai/docs/skills

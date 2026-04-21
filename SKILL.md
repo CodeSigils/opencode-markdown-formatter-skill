@@ -7,7 +7,7 @@ argument-hint: "{filename} or --all {directory}"
 user-invocable: true
 ---
 
-> This skill follows the [OpenCode Skills Specification](https://open-code.ai/docs/en/skills) and [Anthropic Agent Skills Spec](https://agentskills.io).
+> This skill follows the [OpenCode Skills Specification](https://opencode.ai/docs/skills) and [Anthropic Agent Skills Spec](https://agentskills.io).
 
 # Markdown Formatter
 
