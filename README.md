@@ -5,7 +5,22 @@
 
 Format all Markdown files to GitHub Flavored Markdown (GFM) standard.
 
-## Quick Start
+## Recommended: Live Table Formatting
+
+For automatic table formatting during AI text generation, use the community plugin:
+
+```bash
+npm install @franlol/opencode-md-table-formatter
+```
+
+Add to `.opencode/opencode.jsonc`:
+```json
+{
+  "plugin": ["@franlol/opencode-md-table-formatter@latest"]
+}
+```
+
+## Quick Start (CLI Alternative)
 
 ```bash
 # Install (symlink for development)

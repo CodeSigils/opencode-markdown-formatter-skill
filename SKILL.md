@@ -24,17 +24,32 @@ Use this skill whenever you create or modify any Markdown file (files with `.md`
 
 This skill supports two complementary tools:
 
-1. **mdformat** - Formats markdown to GFM standard (primary)
-2. **markdownlint** - Lints and fixes GFM rules (alternative)
+1. **@franlol/opencode-md-table-formatter** - Plugin for live table formatting (recommended)
+2. **fix-tables.js** - CLI tool for batch processing (alternative)
 
-## Approach 1: mdformat (Primary)
+### Recommended: Community Plugin
 
-Uses `mdformat` with GFM extensions for automatic formatting.
-
-### Format Command
+For automatic table formatting during AI text generation, use the community plugin:
 
 ```bash
-uvx --with mdformat-gfm mdformat --extensions gfm --wrap=80 {filename}
+npm install @franlol/opencode-md-table-formatter
+```
+
+Add to your `.opencode/opencode.jsonc`:
+```json
+{
+  "plugin": ["@franlol/opencode-md-table-formatter@latest"]
+}
+```
+
+This formats tables automatically after AI text completion with proper alignment.
+
+### Alternative: CLI Tool
+
+For batch processing or CI/CD pipelines, use the CLI:
+
+```bash
+fix-tables.js {filename} && npx markdownlint-cli2 {filename} --fix
 ```
 
 To format all .md files in current directory:
@@ -66,9 +81,9 @@ Step 2 fixes everything else.
 
 | Tool | Strength |
 |------|----------|
-| mdformat | Formats consistently, wraps lines |
+| @franlol/opencode-md-table-formatter | Auto-formats tables after AI generation (recommended) |
 | markdownlint | Catches MD001-MD045 rules |
-| fix-tables.js | Normalizes table separators |
+| fix-tables.js | CLI for batch processing / CI-CD |
 
 ## GFM Requirements
 
