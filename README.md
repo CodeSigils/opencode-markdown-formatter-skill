@@ -57,9 +57,14 @@ For CI/CD pipelines or manual batch processing:
 git clone https://github.com/CodeSigils/opencode-markdown-formatter-skill.git
 cd opencode-markdown-formatter-skill
 
-# Run fix-tables.js directly
+# Run fix-tables.js (table separators)
 node references/fix-tables.js README.md
+
+# Run markdownlint (full GFM formatting)
+npx markdownlint-cli2 README.md --fix
 ```
+
+**Note:** `fix-tables.js` handles table separators only. `markdownlint-cli2` handles all other GFM rules (headings, lists, code blocks, links, etc.).
 
 ## What It Does
 
