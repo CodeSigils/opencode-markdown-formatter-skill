@@ -54,18 +54,16 @@ This formats tables automatically after AI text completion with proper alignment
 For batch processing or CI/CD pipelines:
 
 ```bash
-# From skill directory - fix tables first, then lint (recommended)
-node references/fix-tables.js {filename} && npx markdownlint-cli2 {filename} --fix
-
-# Run individually
-node references/fix-tables.js {filename}
-npx markdownlint-cli2 {filename} --fix
+# Use package.json scripts (requires npm install)
+npm install
+npm run format -- {filename}
+npm run format:all
 ```
 
-To format all .md files in current directory:
+Or run directly without install:
 
 ```bash
-find . -name "*.md" -exec node references/fix-tables.js {} \; && npx markdownlint-cli2 . --fix
+node references/fix-tables.js {filename} && npx markdownlint-cli2 {filename} --fix
 ```
 
 ## Approach 2: markdownlint (Alternative)
@@ -83,7 +81,7 @@ npx markdownlint-cli2 {filename} --fix
 For best results, use both tools in sequence:
 
 ```bash
-node references/fix-tables.js {filename} && npx markdownlint-cli2 {filename} --fix
+npm run format -- {filename}
 ```
 
 Step 1 normalizes table separators (mdformat misses this).
@@ -156,21 +154,21 @@ All markdown must follow these rules:
 ### After Creating a New File
 
 1. Write the markdown content
-2. Run: `node references/fix-tables.js {filename} && npx markdownlint-cli2 {filename} --fix`
+2. Run: `npm run format -- {filename}` (or use direct commands below)
 3. Verify the formatted output
 4. Stage and commit
 
 ### Recommended: Full Pipeline
 
 1. Write the markdown content
-2. Run table fix: `node references/fix-tables.js {filename}`
-3. Run lint: `npx markdownlint-cli2 {filename} --fix`
+2. Install: `npm install`
+3. Run: `npm run format -- {filename}`
 4. Stage and commit
 
 ### Batch Fix All Markdown
 
 ```bash
-find . -name "*.md" -exec node references/fix-tables.js {} \; && npx markdownlint-cli2 . --fix
+npm run format:all
 ```
 
 ## fix-tables.js
@@ -188,20 +186,14 @@ Normalizes table separators from old-style `|------|------|` to GFM-compliant `|
 ### Usage
 
 ```bash
-# Fix specific file
+# Using npm scripts (requires npm install)
+npm run format -- notes/file.md    # Tables + lint
+npm run format:all             # All .md files
+npm run format:table -- notes/file.md    # Tables only
+
+# Direct commands (no install)
 node references/fix-tables.js notes/file.md
-
-# Fix all .md in directory
-node references/fix-tables.js --all notes/
-
-# Check only (exit non-zero if fixes needed)
 node references/fix-tables.js --check notes/file.md
-
-# Output to stdout
-node references/fix-tables.js --stdout < file.md
-
-# Verbose output
-node references/fix-tables.js -v notes/file.md
 ```
 
 ### How It Works
@@ -233,18 +225,10 @@ Add to `.markdownlint.json`:
 
 ### Tables not rendering correctly
 
-Use the two-step pipeline:
+Use the npm script:
 
 ```bash
-node references/fix-tables.js {filename} && npx markdownlint-cli2 {filename} --fix
-```
-
-### "Cannot find fix-tables.js"
-
-Use `node` to run the local script:
-
-```bash
-node references/fix-tables.js notes/file.md
+npm run format -- {filename}
 ```
 
 ## Quick Reference
