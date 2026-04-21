@@ -1,0 +1,34 @@
+# Dependencies
+node_modules/
+venv/
+.venv/
+env/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OpenCode (can be project-specific)
+.opencode/
+.skills/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+dist/
+build/
+
+# Logs
+*.log
+
+# Temporary
+*.tmp
+*.temp
