@@ -118,9 +118,9 @@ echo "Hello, World!"
 
 > This is a blockquote. It can span multiple lines.
 
-> Nested quotes
+> Nested quotes are supported
 >
-> > inside quotes are supported
+> > inside quotes also work
 
 ## 9. Horizontal Rules
 
@@ -160,7 +160,7 @@ https://opencode.ai
 
 > **Note**: This demonstrates nested blockquote with emphasis.
 >
-> - List inside quote
+> - List inside quote works
 > - Another item
 
 ## 15. Line Breaks
