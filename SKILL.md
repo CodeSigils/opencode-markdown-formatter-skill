@@ -212,15 +212,6 @@ fix-tables.js -v notes/file.md
 
 ## Troubleshooting
 
-### "uvx: command not found"
-
-Use `npx` as fallback:
-
-```bash
-npx markdownlint-cli2 {filename} --fix
-npx --package mdformat-gfm mdformat --extensions gfm --wrap=80 {filename}
-```
-
 ### MD013: line too long
 
 Enable line wrapping with mdformat:
