@@ -20,57 +20,37 @@ Use this skill whenever you create or modify any Markdown file (files with `.md`
 
 **Trigger phrases**: "format markdown", "GFM", "write markdown", "create README", "update docs"
 
-## Two Approaches
+## Tool
 
-This skill supports two complementary tools:
+Uses `markdownlint-cli2` via `npx` for linting and auto-fixing GFM rules.
 
-1. **mdformat** - Formats markdown to GFM standard (primary)
-2. **markdownlint** - Lints and fixes GFM rules (alternative)
-
-## Approach 1: mdformat (Primary)
-
-Uses `mdformat` with GFM extensions for automatic formatting.
-
-### Format Command
+### Quick Command
 
 ```bash
-uvx --with mdformat-gfm mdformat --extensions gfm --wrap=80 {filename}
+npx markdownlint-cli2 {filename} --fix
 ```
 
 To format all .md files in current directory:
 
 ```bash
-uvx --with mdformat-gfm mdformat --extensions gfm --wrap=80 .
+npx markdownlint-cli2 . --fix
 ```
 
-## Approach 2: markdownlint (Alternative)
+### Two-Step Pipeline (Recommended)
 
-Uses `markdownlint-cli2` for linting with comprehensive GFM rules.
-
-### Lint Command
+For docs with tables, use both tools in sequence:
 
 ```bash
-uvx markdownlint-cli2 {filename} --fix
+fix-tables.py {filename} && npx markdownlint-cli2 {filename} --fix
 ```
 
-### Recommended: Two-Step Pipeline
-
-For best results, use both tools in sequence:
-
-```bash
-fix-tables.py {filename} && uvx markdownlint-cli2 {filename} --fix
-```
-
-Step 1 normalizes table separators (mdformat misses this).
+Step 1 normalizes table separators to `| :--- | :--- |` left-aligned style.
 Step 2 fixes everything else.
 
-### Why Two Tools?
-
-| Tool | Strength |
-|------|----------|
-| mdformat | Formats consistently, wraps lines |
-| markdownlint | Catches MD001-MD045 rules |
-| fix-tables.py | Normalizes table separators |
+| Tool | Purpose |
+|------|---------|
+| fix-tables.py | Normalize table separator alignment |
+| markdownlint | Fix all GFM rules (MD001-MD045) |
 
 ## GFM Requirements
 
@@ -133,7 +113,7 @@ All markdown must follow these rules:
 ### After Creating a New File
 
 1. Write the markdown content
-2. Run: `uvx --with mdformat-gfm mdformat --extensions gfm --wrap=80 {filename}`
+2. Run: `npx markdownlint-cli2 {filename} --fix`
 3. Verify the formatted output
 4. Stage and commit
 
@@ -141,24 +121,20 @@ All markdown must follow these rules:
 
 1. Write the markdown content
 2. Run table fix: `fix-tables.py {filename}`
-3. Run lint: `uvx markdownlint-cli2 {filename} --fix`
+3. Run lint: `npx markdownlint-cli2 {filename} --fix`
 4. Stage and commit
 
 ### Batch Fix All Markdown
 
 ```bash
-# mdformat
-find . -name "*.md" -exec uvx --with mdformat-gfm mdformat --extensions gfm --wrap=80 {} \;
-
-# or markdownlint
-find . -name "*.md" -exec uvx markdownlint-cli2 {} --fix \;
+find . -name "*.md" -exec npx markdownlint-cli2 {} --fix \;
 ```
 
 ## fix-tables.py
 
 Normalizes table separators from old-style `|------|------|` to GFM-compliant `| :--- | :--- |` style.
 
-**Why?** mdformat doesn't handle table separator alignment, so this script fills the gap.
+**Why?** markdownlint doesn't handle table separator alignment, so this script fills the gap.
 
 ### Location
 
@@ -195,7 +171,7 @@ fix-tables.py --dry notes/file.md
 | Italic | `_italic_` |
 | Code block | ``` `lang` |
 | Link | `[text](url)` |
-| Table | `\| col \|` + `\| :--- \|` |
+| Table | `| col |` + `| :--- |` |
 | Task list | `- [ ] task` |
 
 ## Configuration
@@ -213,4 +189,5 @@ cp ~/.config/opencode/skills/markdown-formatter/references/.markdownlint.json ./
 Or pass explicitly:
 
 ```bash
-uvx markdownlint-cli2 --config ~/.config/opencode/skills/markdown-formatter/references/.markdownlint.json {filename} --fix
+npx markdownlint-cli2 --config ~/.config/opencode/skills/markdown-formatter/references/.markdownlint.json {filename} --fix
+```

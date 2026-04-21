@@ -25,23 +25,23 @@ formatter.
 
 ### Unordered Lists
 
-- Item one
-- Item two
-  - Nested item
-  - Another nested
-- Item three
+-   Item one
+-   Item two
+  -   Nested item
+  -   Another nested
+-   Item three
 
 ### Ordered Lists
 
-1. First item
-1. Second item
-1. Third item
+1.  First item
+2.  Second item
+3.  Third item
 
 ### Task Lists
 
-- [ ] Unchecked task
-- [x] Checked task
-- [ ] Another unchecked
+-   [ ] Unchecked task
+-   [x] Checked task
+-   [ ] Another unchecked
 
 ## 4. Code Blocks
 
@@ -126,15 +126,15 @@ echo "Hello, World!"
 
 Three ways to write horizontal rules:
 
----
+______________________________________________________________________
 
 (- - -)
 
----
+______________________________________________________________________
 
-(\* \* \*)
+(\* * \*)
 
----
+______________________________________________________________________
 
 ## 10. Strikethrough (GFM Extension)
 
@@ -142,7 +142,7 @@ Three ways to write horizontal rules:
 
 ## 11. Autolinks (GFM Extension)
 
-https://opencode.ai
+<https://opencode.ai>
 
 ## 12. Inline HTML
 
@@ -152,16 +152,16 @@ https://opencode.ai
 
 ## 13. Task Lists Multiple
 
-- [ ] Task one
-- [ ] Task two
-- [x] Completed task
+-   [ ] Task one
+-   [ ] Task two
+-   [x] Completed task
 
 ## 14. Complex Nested Elements
 
 > **Note**: This demonstrates nested blockquote with emphasis.
 >
-> - List inside quote works
-> - Another item
+> -   List inside quote works
+> -   Another item
 
 ## 15. Line Breaks
 
@@ -186,7 +186,7 @@ Line break with `<br>` tag<br>Another line break
 | Rust       | `println!("Hello")`    |
 | Go         | `fmt.Println("Hello")` |
 
----
+______________________________________________________________________
 
 End of Kitchen Sink Test File
 

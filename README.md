@@ -4,7 +4,7 @@ A community skill for [OpenCode](https://opencode.ai) that formats all Markdown 
 
 ## What It Does
 
-This skill automatically formats any Markdown file to follow GitHub Flavored Markdown conventions. It uses `mdformat` with GFM extensions to ensure consistent, clean Markdown that renders properly on GitHub, GitLab, and other platforms.
+This skill automatically formats any Markdown file to follow GitHub Flavored Markdown conventions. It uses `markdownlint-cli2` via `npx` to ensure consistent, clean Markdown that renders properly on GitHub, GitLab, and other platforms.
 
 ### Features
 
@@ -16,14 +16,13 @@ This skill automatically formats any Markdown file to follow GitHub Flavored Mar
 - **Tables** - Proper GFM table syntax with alignment
 - **Emphasis** - Consistent bold (`**`) and italic (`_`) usage
 - **No trailing whitespace** - Removes trailing spaces automatically
-- **Line wrapping** - Wraps lines at 80 characters for readability
 
 ## Requirements
 
 - [OpenCode](https://opencode.ai) installed
-- [uv](https://github.com/astral-sh/uv) package manager (for running mdformat)
+- Node.js (for running markdownlint via npx)
 
-The skill uses `uvx` to run mdformat on-demand, so no persistent installation needed.
+The skill uses `npx` to run markdownlint on-demand, so no persistent installation needed.
 
 ## Installation
 
@@ -31,7 +30,7 @@ The skill uses `uvx` to run mdformat on-demand, so no persistent installation ne
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/opencode-markdown-formatter-skill.git
+git clone https://github.com/anomalyco/opencode-markdown-formatter-skill.git
 
 # Copy to OpenCode global skills directory
 cp -r opencode-markdown-formatter-skill ~/.config/opencode/skills/markdown-formatter
@@ -41,7 +40,7 @@ cp -r opencode-markdown-formatter-skill ~/.config/opencode/skills/markdown-forma
 
 ```bash
 # Clone into your project's .opencode/skills directory
-git clone https://github.com/yourusername/opencode-markdown-formatter-skill.git .opencode/skills/markdown-formatter
+git clone https://github.com/anomalyco/opencode-markdown-formatter-skill.git .opencode/skills/markdown-formatter
 ```
 
 ### Option 3: Symlink (for development)
@@ -66,33 +65,25 @@ The skill automatically triggers when you create or modify any `.md` file.
 The skill runs this command to format Markdown files:
 
 ```bash
-uvx --with mdformat-gfm mdformat --extensions gfm --wrap=80 {filename}
+npx markdownlint-cli2 {filename} --fix
 ```
 
 ### Example Workflow
 
 1. Create or edit a Markdown file in OpenCode
 2. The skill automatically detects the .md file
-3. After writing, run: `uvx --with mdformat-gfm mdformat --extensions gfm --wrap=80 yourfile.md`
+3. After writing, run: `npx markdownlint-cli2 yourfile.md --fix`
 4. The file is automatically formatted to GFM standard
 
-## Configuration
+## Two-Step Pipeline (Recommended)
 
-### Custom Wrap Width
-
-To use a different wrap width, modify the command in SKILL.md:
+For docs with tables, use both fix-tables.py and markdownlint:
 
 ```bash
-uvx --with mdformat-gfm mdformat --extensions gfm --wrap=100 {filename}
+fix-tables.py {filename} && npx markdownlint-cli2 {filename} --fix
 ```
 
-### Additional mdformat Options
-
-Add options like `--skip-invalid` or `--compact-tables` as needed:
-
-```bash
-uvx --with mdformat-gfm mdformat --extensions gfm --wrap=80 --compact-tables {filename}
-```
+Step 1 normalizes table separators. Step 2 fixes everything else.
 
 ## Skills Directory
 
@@ -103,16 +94,16 @@ OpenCode searches for skills in these locations (in priority order):
 
 ## Troubleshooting
 
-### "uvx: command not found"
+### "npx: command not found"
 
-Install uv:
+Install Node.js:
 ```bash
-curl -LsSf https://astral.sh/uv/install.sh | sh
+# macOS/Homebrew
+brew install node
+
+# Ubuntu/Debian
+sudo apt-get install nodejs npm
 ```
-
-### "mdformat-gfm not found"
-
-The skill automatically installs mdformat-gfm via `uvx --with mdformat-gfm`. This should work automatically.
 
 ### Skill not loading
 
@@ -123,8 +114,8 @@ ls -la ~/.config/opencode/skills/markdown-formatter/SKILL.md
 
 ## Related Skills
 
-- [code-review-checklist](https://github.com/yourusername/opencode-code-review-checklist) - Python code review checklist
-- [skill-creator](https://github.com/antongulin/opencode-skill-creator) - Create and test OpenCode skills
+- [code-review-checklist](https://github.com/anomalyco/opencode-code-review-checklist) - Python code review checklist
+- [skill-creator](https://github.com/anomalyco/opencode-skill-creator) - Create and test OpenCode skills
 
 ## Skill Development Best Practices
 
@@ -148,19 +139,17 @@ OpenCode loads skills progressively:
 ```
 markdown-formatter/
 ├── SKILL.md           # Required: skill definition
-├── scripts/           # Optional: executable helpers
-│   └── format.sh
-└── references/       # Optional: additional docs
-    └── examples.md
+├── references/        # Optional: additional resources
+│   ├── fix-tables.py  # Table separator normalizer
+│   └── .markdownlint.json  # Lint configuration
 ```
 
-See [Best Practices Guide](https://lzw.me/docs/opencodedocs/joshuadavidthomas/opencode-agent-skills/appendix/best-practices/) for more.
+See [Best Practices Guide](https://open-code.ai/docs/en/skills) for more.
 
 ## Official Documentation
 
 - [OpenCode Skills Documentation](https://open-code.ai/docs/en/skills) - Official skill format guide
 - [OpenCode Agent Skills](https://dev.opencode.ai/docs/skills) - Full API reference
-- [SKILL.md Best Practices](https://lzw.me/docs/opencodedocs/joshuadavidthomas/opencode-agent-skills/appendix/best-practices/) - Community best practices
 - [Anthropic Agent Skills Spec](https://agentskills.io) - Official skill specification
 
 ## License
@@ -173,6 +162,6 @@ Contributions welcome! Please open an issue or pull request on GitHub.
 
 ## Acknowledgments
 
-- [mdformat](https://github.com/executablebooks/mdformat) - Python Markdown formatter
-- [mdformat-gfm](https://github.com/executablebooks/mdformat-gfm) - GFM plugin for mdformat
+- [markdownlint](https://github.com/DavidAnson/markdownlint) - Markdown linting tool
+- [markdownlint-cli2](https://github.com/DavidAnson/markdownlint-cli) - Command-line interface
 - [OpenCode](https://opencode.ai) - AI coding agent
