@@ -177,8 +177,7 @@ npx markdownlint-cli2 --config ~/.config/opencode/skills/markdown-formatter/refe
 
 ## Related Skills
 
-- [code-review-checklist](https://github.com/CodeSigils/opencode-code-review-checklist) - Code review checklist
-- [skill-creator](https://github.com/CodeSigils/opencode-skill-creator) - Create and test OpenCode skills
+Other skills available in the [CodeSigils](https://github.com/CodeSigils) organization.
 
 ## Directory Structure
 
