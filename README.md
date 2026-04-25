@@ -177,7 +177,7 @@ npx markdownlint-cli2 --config ~/.config/opencode/skills/markdown-formatter/refe
 
 ## Related Skills
 
-Other skills available in the [CodeSigils](https://github.com/CodeSigils) organization.
+Other skills available in my [Hermes skills](https://github.com/CodeSigils/hermes-markdown-lint-skill) collection.
 
 ## Directory Structure
 
