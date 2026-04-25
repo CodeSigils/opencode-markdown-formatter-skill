@@ -8,9 +8,7 @@ license: MIT
 compatibility: opencode
 metadata:
   argument-hint: "{filename} or --all {directory}"
-  user-invocable: true
-  tags: [markdown, formatter, gfm, github, formatting, quality, documentation]
-  category: devtools
+  category: "devtools"
 ---
 
 # Markdown Formatter
