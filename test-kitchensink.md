@@ -92,21 +92,21 @@ echo "Hello, World!"
 ### Basic Table
 
 | Name  | Age | City |
-| ----- | --- | ---- |
+| :--- | :--- | :--- |
 | Alice | 25  | NYC  |
 | Bob   | 30  | LA   |
 
 ### Table with Alignment
 
 | Left  | Center | Right |
-| :---- | :----: | ----: |
+| :--- | :-----: | ----: |
 | a     |   b    |     c |
 | align | align  | align |
 
 ### Complex Table
 
 | Feature |    Syntax     | Example     |
-| :------ | :-----------: | :---------- |
+| :------ | :-----: | :------ |
 | Heading |  `# Heading`  | # Title     |
 | Bold    |  `**text**`   | **bold**    |
 | Italic  |   `*text*`    | _italic_    |
@@ -171,7 +171,7 @@ Line break with `<br>` tag<br>Another line break
 ## 16. Unicode and Emoji
 
 | Symbol | Name      |
-| :----- | :-------- |
+| :----- | :--- |
 | ✅     | Checkmark |
 | ❌     | Cross     |
 | 🔧     | Wrench    |
@@ -180,7 +180,7 @@ Line break with `<br>` tag<br>Another line break
 ## 17. Code in Tables
 
 | Language   | Hello World            |
-| :--------- | :--------------------- |
+| :------- | :---------- |
 | Python     | `print("Hello")`       |
 | JavaScript | `console.log("Hello")` |
 | Rust       | `println!("Hello")`    |

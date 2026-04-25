@@ -17,7 +17,6 @@
 
 const fs = require('fs');
 const path = require('path');
-const glob = require('glob');
 
 function _parseCellsRaw(line) {
     const cells = [];
@@ -40,7 +39,6 @@ function _isSeparatorLine(line) {
     if (!stripped.startsWith('|')) {
         return false;
     }
-    const hasTrailingPipe = stripped.endsWith('|');
     const cells = _parseCellsRaw(stripped);
     return cells.every(cell => {
         const c = cell.trim();
@@ -48,17 +46,6 @@ function _isSeparatorLine(line) {
         const cleaned = c.replace(/:/g, '');
         return cleaned.length >= 3 && /^-{3,}$/.test(cleaned);
     });
-}
-
-function _normalizeCell(cell) {
-    const inner = cell.trim();
-    const leading = inner.startsWith(':');
-    const trailing = inner.endsWith(':');
-    const center = leading && trailing;
-
-    if (center) return ':---:';
-    if (trailing) return '---:';
-    return ':---';
 }
 
 function _getSeparatorAlignment(cell) {
@@ -73,25 +60,18 @@ function _buildAlignedSeparator(headerLine, separatorLine) {
     const separatorCells = _parseCellsRaw(separatorLine.trim());
     const alignments = separatorCells.map(c => _getSeparatorAlignment(c.trim()));
 
-    if (alignments.every(a => a === 'left')) {
-        alignments.length = headerCells.length;
-        alignments.fill('left');
-    }
-
     const parts = [];
     for (let i = 0; i < headerCells.length; i++) {
         const align = alignments[i] || 'left';
-        const cellWidth = Math.max(headerCells[i].length, 3);
-        const minDashes = Math.max(3, cellWidth - 1);
+        // VSCode/marktext format: header length - 1, min 3 dashes
+        const cellWidth = Math.max(3, headerCells[i].length - 1);
         let sep;
         if (align === 'center') {
-            const left = Math.floor((minDashes) / 2);
-            const right = minDashes - left;
-            sep = ':' + '-'.repeat(left) + '-'.repeat(right) + ':';
+            sep = ':' + '-'.repeat(cellWidth) + ':';
         } else if (align === 'right') {
-            sep = '-'.repeat(minDashes) + ':';
+            sep = '-'.repeat(cellWidth) + ':';
         } else {
-            sep = ':' + '-'.repeat(minDashes);
+            sep = ':' + '-'.repeat(cellWidth);
         }
         parts.push(' ' + sep + ' ');
     }
@@ -100,6 +80,7 @@ function _buildAlignedSeparator(headerLine, separatorLine) {
 }
 
 function _fixFileInContent(content) {
+    const hasTrailingNewline = content.endsWith('\n');
     const lines = content.split('\n');
     const newLines = [...lines];
     let changed = 0;
@@ -114,7 +95,7 @@ function _fixFileInContent(content) {
         if (!_parseCellsRaw(headerLine).length) continue;
 
         const cells = _parseCellsRaw(line.trim());
-        if (cells.every(c => c.trim() === ':---')) {
+        if (_isSeparatorAlreadyCorrect(cells)) {
             continue;
         }
 
@@ -124,10 +105,22 @@ function _fixFileInContent(content) {
         fixedLines.push(i + 1);
     }
 
+    let newContent = newLines.join('\n');
+    if (hasTrailingNewline && !newContent.endsWith('\n')) {
+        newContent += '\n';
+    }
+
     if (changed === 0) {
         return { content, changed: 0, fixedLines: [] };
     }
-    return { content: newLines.join('\n'), changed, fixedLines };
+    return { content: newContent, changed, fixedLines };
+}
+
+function _isSeparatorAlreadyCorrect(cells) {
+    return cells.every(c => {
+        const t = c.trim();
+        return t === ':---' || t === '---:' || t === ':---:';
+    });
 }
 
 function fixFile(filePath, options = {}) {
@@ -161,9 +154,29 @@ function fixStdin() {
     process.stdin.setEncoding('utf8');
     process.stdin.on('data', chunk => { content += chunk; });
     process.stdin.on('end', () => {
-        const { content: fixedContent, changed } = _fixFileInContent(content);
+        const { content: fixedContent } = _fixFileInContent(content);
         process.stdout.write(fixedContent);
     });
+}
+
+// Find all .md files recursively (replaces glob)
+function findMdFiles(dir) {
+    const files = [];
+    if (!fs.existsSync(dir) || !fs.statSync(dir).isDirectory()) {
+        return files;
+    }
+    function walk(subdir) {
+        for (const entry of fs.readdirSync(subdir, { withFileTypes: true })) {
+            const full = path.join(subdir, entry.name);
+            if (entry.isDirectory() && !entry.name.startsWith('.') && entry.name !== 'node_modules') {
+                walk(full);
+            } else if (entry.isFile() && entry.name.endsWith('.md')) {
+                files.push(full);
+            }
+        }
+    }
+    walk(dir);
+    return files;
 }
 
 function main() {
@@ -199,8 +212,7 @@ function main() {
     }
 
     if (directory) {
-        const pattern = path.join(directory, '**/*.md');
-        const matches = glob.sync(pattern);
+        const matches = findMdFiles(directory);
         files.push(...matches);
     }
 

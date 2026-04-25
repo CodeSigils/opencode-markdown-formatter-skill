@@ -10,7 +10,6 @@
     "format:lint:all": "npx markdownlint-cli2 . --fix"
   },
   "devDependencies": {
-    "glob": "^10.3.0",
     "markdownlint-cli2": "^1.1.0"
   },
   "keywords": ["markdown", "gfm", "formatter", "lint"],
