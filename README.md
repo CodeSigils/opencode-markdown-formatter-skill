@@ -122,7 +122,13 @@ node references/fix-tables.js --stdout < file.md > fixed.md
 ## Testing
 
 ```bash
-node --test test-js.mjs
+node --test test/test-js.mjs
+```
+
+Or with npm (if dependencies installed):
+
+```bash
+npm test
 ```
 
 ## Troubleshooting
@@ -151,15 +157,16 @@ markdown-formatter/
 ├── SKILL.md                    # Skill definition (for OpenCode)
 ├── README.md                   # This file
 ├── CONTRIBUTING.md             # Contribution guidelines
-├── LICENSE                   # MIT license
-├── package.json              # npm scripts for convenience
-├── test-js.mjs             # JavaScript tests
-├── test-kitchensink.md     # Test data
+├── LICENSE                     # MIT license
+├── package.json                # npm scripts for convenience
 ├── references/
-│   ├── fix-tables.js      # Table separator normalizer (CLI)
-│   └── .markdownlint.json # Lint configuration
+│   ├── fix-tables.js           # Table separator normalizer (CLI)
+│   └── .markdownlint.json      # Lint configuration
+├── test/
+│   ├── test-js.mjs             # JavaScript tests
+│   └── kitchensink.md          # Test data
 └── .github/workflows/
-    └── ci.yml             # CI/CD pipeline
+    └── ci.yml                  # CI/CD pipeline
 ```
 
 ## License

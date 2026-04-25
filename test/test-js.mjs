@@ -3,7 +3,7 @@ import assert from 'node:assert';
 import fs from 'node:fs';
 import path from 'node:path';
 
-const { _isSeparatorLine, _fixFileInContent } = await import('./references/fix-tables.js');
+const { _isSeparatorLine, _fixFileInContent } = await import('../references/fix-tables.js');
 
 describe('_isSeparatorLine', () => {
   it('detects separator lines', () => {
