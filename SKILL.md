@@ -3,8 +3,9 @@ name: markdown-formatter
 description: Format markdown to GFM standard. Use the @franlol/opencode-md-table-formatter plugin for live formatting, or fix-tables.js CLI for batch processing. Trigger on any .md file creation or modification.
 license: MIT
 compatibility: opencode
-argument-hint: "{filename} or --all {directory}"
-user-invocable: true
+metadata:
+  argument-hint: "{filename} or --all {directory}"
+  user-invocable: true
 ---
 
 > This skill follows the [OpenCode Skills Specification](https://opencode.ai/docs/skills) and [Anthropic Agent Skills Spec](https://agentskills.io).
