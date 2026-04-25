@@ -10,30 +10,51 @@ A skill for [OpenCode](https://opencode.ai) that provides instructions for forma
 ## Skill vs Plugin
 
 | Aspect | Skill | Plugin |
-|--------|-------|--------|
+| :----- | :---- | :----- |
 | **What it is** | Instructions for the AI agent | Executable code that runs in OpenCode |
-| **When it runs** | When you invoke the skill or AI writes markdown | Automatically on specific events |
+| **When it runs** | When you explicitly load it or AI reads instructions | Automatically on specific events |
 | **Installation** | Clone to `~/.config/opencode/skills/` | Add to `opencode.jsonc` plugins |
 | **Example** | This skill | `@franlol/opencode-md-table-formatter` |
 
-This skill provides guidance to the AI on how to format markdown correctly. For automatic live formatting, see the community plugin below.
-
-## Quick Start
-
-### Option 1: Use This Skill
-
-Install the skill to provide AI with formatting instructions:
+## Installation
 
 ```bash
 # Clone to OpenCode skills directory
 git clone https://github.com/CodeSigils/opencode-markdown-formatter-skill.git ~/.config/opencode/skills/markdown-formatter
 ```
 
-The skill triggers when you create or modify `.md` files. It instructs the AI to format markdown according to GFM standards.
+## How to Use
 
-### Option 2: Use the Community Plugin (Recommended for Live Formatting)
+### Option 1: Explicitly Load the Skill
 
-For automatic formatting as you type:
+When you need to format markdown, tell the AI to load the skill:
+
+```
+Load the markdown-formatter skill and format this file.
+```
+
+Or the AI can call: `skill({ name: "markdown-formatter" })`
+
+The skill instructs the AI to format markdown according to GFM standards automatically.
+
+### Option 2: Use the Wrapper Script (Recommended)
+
+Run the lint.sh script directly:
+
+```bash
+# Fix a file
+~/.config/opencode/skills/markdown-formatter/lint.sh filename.md
+
+# Fix all .md in directory
+~/.config/opencode/skills/markdown-formatter/lint.sh --all .
+
+# Check only (read-only, exits 0 if clean)
+~/.config/opencode/skills/markdown-formatter/lint.sh --check filename.md
+```
+
+### Option 3: Use the Community Plugin (Live Formatting)
+
+For automatic formatting as you type, install the plugin:
 
 ```bash
 # Install the plugin
@@ -48,27 +69,12 @@ Add to `.opencode/opencode.jsonc`:
 }
 ```
 
-### Option 3: CLI Tool (Batch Processing)
-
-For CI/CD pipelines or manual batch processing (no install required):
-
-```bash
-# Clone the repository
-git clone https://github.com/CodeSigils/opencode-markdown-formatter-skill.git
-cd opencode-markdown-formatter-skill
-
-# Run directly (no install required)
-node references/fix-tables.js README.md && npx markdownlint-cli2 README.md --fix
-```
-
-**Note:** `fix-tables.js` handles table separators only. `markdownlint-cli2` handles all other GFM rules (headings, lists, code blocks, links, etc.).
-
 ## What It Does
 
 When the skill is active, the AI will format markdown like this:
 
 | Feature | Before | After |
-|---------|--------|-------|
+| :------ | :----- | :---- |
 | Table separator | `\|------\|------\|` | `\| :--- \| :--- \|` (auto-widths) |
 | Table column width | `\|h1\|h2\|` | `\| h1 \| h2 \|` (matches header) |
 | Heading | `#Title` | `# Title` |
@@ -78,9 +84,9 @@ When the skill is active, the AI will format markdown like this:
 ## Features
 
 - **Skill**: Provides AI with GFM formatting instructions
-- **CLI**: Batch processing for CI/CD workflows (`fix-tables.js`)
+- **CLI**: Batch processing for CI/CD workflows (`lint.sh`)
 - **Plugin alternative**: Community plugin for live formatting
-- **Auto-width tables**: Separator widths match header column lengths (like Emacs org-mode)
+- **Auto-width tables**: Separator widths match header column lengths
 - **Preserves idempotent changes**: Skips already-correct files
 
 ## Requirements
@@ -88,19 +94,19 @@ When the skill is active, the AI will format markdown like this:
 - [OpenCode](https://opencode.ai) installed
 - Node.js 18+ (for npx CLI tools)
 
-## npm Scripts (Optional)
+## lint.sh Reference
 
-If you install dependencies, these scripts are available:
-
-```bash
-npm run format -- {filename}
-npm run format:all
-```
-
-## Direct Commands (No Install Required)
+The wrapper script runs the full pipeline: fix-tables.js + markdownlint-cli2
 
 ```bash
-node references/fix-tables.js {filename} && npx markdownlint-cli2 {filename} --fix
+# Fix specific file
+lint.sh <path>
+
+# Fix all .md in directory
+lint.sh --all <directory>
+
+# Check only (read-only, exit 0 if clean)
+lint.sh --check <path>
 ```
 
 ## fix-tables.js CLI Reference
@@ -119,16 +125,29 @@ node references/fix-tables.js --check notes/file.md
 node references/fix-tables.js --stdout < file.md > fixed.md
 ```
 
+## Auto-Lint on Write (Optional)
+
+To automatically lint markdown files after they're written, configure a hook in `.opencode/opencode.jsonc`:
+
+```json
+{
+  "hooks": {
+    "post_tool_call": [
+      {
+        "matcher": "write_file",
+        "command": "~/.config/opencode/skills/markdown-formatter/scripts/post-write.sh"
+      }
+    ]
+  }
+}
+```
+
+> **Note:** Requires `jq` to be installed on your system.
+
 ## Testing
 
 ```bash
 node --test test/test-js.mjs
-```
-
-Or with npm (if dependencies installed):
-
-```bash
-npm test
 ```
 
 ## Troubleshooting
@@ -143,6 +162,17 @@ brew install node
 
 # Ubuntu/Debian
 sudo apt-get install nodejs npm
+
+# Or use fnm/nvm
+curl -fsSL https://fnm.install | bash
+```
+
+### Config file not found
+
+Run from the project root, or pass the config explicitly:
+
+```bash
+npx markdownlint-cli2 --config ~/.config/opencode/skills/markdown-formatter/references/.markdownlint.json <path> --fix
 ```
 
 ## Related Skills
@@ -156,12 +186,15 @@ sudo apt-get install nodejs npm
 markdown-formatter/
 ├── SKILL.md                    # Skill definition (for OpenCode)
 ├── README.md                   # This file
+├── lint.sh                     # Wrapper script (fix-tables + markdownlint)
 ├── CONTRIBUTING.md             # Contribution guidelines
 ├── LICENSE                     # MIT license
 ├── package.json                # npm scripts for convenience
 ├── references/
-│   ├── fix-tables.js           # Table separator normalizer (CLI)
+│   ├── fix-tables.js           # Table separator normalizer
 │   └── .markdownlint.json      # Lint configuration
+├── scripts/
+│   └── post-write.sh           # Hook for auto-lint on write
 ├── test/
 │   ├── test-js.mjs             # JavaScript tests
 │   └── kitchensink.md          # Test data
