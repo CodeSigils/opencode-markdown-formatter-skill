@@ -9,12 +9,12 @@ A skill for [OpenCode](https://opencode.ai) that provides instructions for forma
 
 ## Skill vs Plugin
 
-| Aspect | Skill | Plugin |
-| :----- | :---- | :----- |
-| **What it is** | Instructions for the AI agent | Executable code that runs in OpenCode |
-| **When it runs** | When you explicitly load it or AI reads instructions | Automatically on specific events |
-| **Installation** | Clone to `~/.config/opencode/skills/` | Add to `opencode.jsonc` plugins |
-| **Example** | This skill | `@franlol/opencode-md-table-formatter` |
+| Aspect           | Skill                                                | Plugin                                 |
+| :--------------- | :--------------------------------------------------- | :------------------------------------- |
+| **What it is**   | Instructions for the AI agent                        | Executable code that runs in OpenCode  |
+| **When it runs** | When you explicitly load it or AI reads instructions | Automatically on specific events       |
+| **Installation** | Clone to `~/.config/opencode/skills/`                | Add to `opencode.jsonc` plugins        |
+| **Example**      | This skill                                           | `@franlol/opencode-md-table-formatter` |
 
 ## Installation
 
@@ -73,13 +73,13 @@ Add to `.opencode/opencode.jsonc`:
 
 When the skill is active, the AI will format markdown like this:
 
-| Feature | Before | After |
-| :------ | :---- | :--- |
-| Table separator | `\|------\|------\|` | `\| :--- \| :--- \|` (auto-widths) |
-| Table column width | `\|h1\|h2\|` | `\| h1 \| h2 \|` (matches header) |
-| Heading | `#Title` | `# Title` |
-| Link | `https://url` | `[text](https://url)` |
-| List | `* Item` | `- Item` |
+| Feature            | Before               | After                              |
+| :----------------- | :------------------- | :--------------------------------- |
+| Table separator    | `\|------\|------\|` | `\| :--- \| :--- \|` (auto-widths) |
+| Table column width | `\|h1\|h2\|`         | `\| h1 \| h2 \|` (matches header)  |
+| Heading            | `#Title`             | `# Title`                          |
+| Link               | `https://url`        | `[text](https://url)`              |
+| List               | `* Item`             | `- Item`                           |
 
 ## Features
 
