@@ -1,39 +1,41 @@
 # AGENTS.md
 
-This file provides instructions for AI agents working in this repository.
+Instructions for AI agents working in this repository.
 
-## Overview
+## What This Repo Is
 
-This repo contains an OpenCode skill for formatting Markdown to GitHub Flavored Markdown (GFM) standard. It ships three things: a skill definition for AI agents (`SKILL.md`), a CLI wrapper (`lint.sh`), and a table formatter (`fix-tables.js`).
+This is an **OpenCode skill** for formatting Markdown to GitHub Flavored Markdown (GFM) standard.
 
-AI agents should load the `SKILL.md` skill when asked to format or lint markdown files.
+- `SKILL.md` — skill definition (for OpenCode)
+- `lint.sh` — CLI wrapper (recommended entry point)
+- `references/fix-tables.js` — table separator normalizer
+- `references/.markdownlint.json` — lint configuration
 
-## Tech Stack
+## For OpenCode Agents
 
-- **Runtime**: Node.js 18+
-- **Linter**: markdownlint-cli2
-- **Formatter**: `references/fix-tables.js` (custom, no external deps beyond Node)
-- **Config**: `references/.markdownlint.json`
+When asked to format or lint markdown files:
+
+1. **Load the skill**: `skill({ name: "markdown-formatter" })`
+2. **Or use the wrapper**: `./lint.sh`
+
+The skill instructs the AI to format markdown according to GFM standards automatically.
 
 ## Development Commands
 
+Use `lint.sh` for all development tasks:
+
 ```bash
-# Run tests
-node --test test/test-js.mjs
+# Fix a file
+./lint.sh filename.md
 
-# Fix a single file
-node references/fix-tables.js notes/file.md
-
-# Fix all .md in a directory
-node references/fix-tables.js --all notes/
+# Fix all .md in directory
+./lint.sh --all .
 
 # Check only (read-only, exit 0 if clean)
-node references/fix-tables.js --check notes/file.md
-
-# Full pipeline (fix + lint)
-./lint.sh filename.md
-./lint.sh --all .
 ./lint.sh --check filename.md
+
+# Run tests
+node --test test/test-js.mjs
 ```
 
 ## Conventions
@@ -48,23 +50,24 @@ Use this format for all markdown tables:
 | value    | value    |
 ```
 
-- Separator widths must match header column lengths minus 1 (`header.length - 1` — matches VSCode/marktext format)
-- Always include a space after the leading `|` and before the trailing `|`
-- Default column alignment: left (`:---`)
+- Separator widths: `header.length - 1` (matches VSCode/marktext)
+- Space after leading `|` and before trailing `|`
+- Default alignment: left (`:---`)
 
-### markdownlint disabled rules
+### markdownlint rules
 
-These rules are intentionally disabled in `.markdownlint.json`:
-
-- **MD040** — fenced-code-language (too strict for prose docs)
-- **MD055** — table-pipe-style (enforces trailing pipes on both sides)
+| Rule | Status | Note |
+| :--- | :----- | :--- |
+| MD040 | disabled | Too strict for prose docs |
+| MD055 | enabled | Trailing pipes on both sides |
+| MD013 | disabled | Prose lines are naturally longer |
 
 ### File structure
 
 ```
 markdown-formatter/
-├── SKILL.md                    # Skill definition (load this when formatting)
-├── lint.sh                     # Full pipeline wrapper
+├── SKILL.md                    # Skill definition
+├── lint.sh                     # Wrapper (use this)
 ├── references/
 │   ├── fix-tables.js           # Table formatter
 │   └── .markdownlint.json      # Lint config
@@ -75,14 +78,14 @@ markdown-formatter/
 
 ## What to Avoid
 
-- **Do not add `glob` as a dependency.** Use the built-in recursive file-walker in `fix-tables.js` instead.
-- **Do not reformat files that are already correct.** The formatter is idempotent — it skips unchanged files.
-- **Do not change the separator width formula** (`header.length - 1`) without running tests first.
-- **Do not enable MD040** in the markdownlint config — it produces false positives on valid documentation.
+- **Do not add `glob` dependency** — use built-in recursive file-walker
+- **Do not reformat already correct files** — the formatter is idempotent
+- **Do not change separator width formula** without running tests
+- **Do not enable MD040** — produces false positives
 
-## Contribution Workflow
+## Contribution
 
-1. Create a branch from `master`.
-2. Make changes and add tests if modifying `fix-tables.js`.
-3. Run `node --test test/test-js.mjs` to verify nothing breaks.
-4. Push and open a pull request against `master`.
+1. Branch from `master`
+2. Make changes
+3. Test: `./lint.sh --check .` and `node --test test/test-js.mjs`
+4. Push and open PR against `master`
