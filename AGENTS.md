@@ -115,8 +115,29 @@ For reference, see other CodeSigils skills:
 
 ### Documentation
 
-- [OpenCode Agent Skills](https://opencode.ai/docs/agent-skills) — official skill format
+- [OpenCode Agent Skills](https://opencode.ai/docs/skills) — official skill format
 - [OpenCode Plugins](https://opencode.ai/docs/plugins) — for hooks (not in config)
+
+## SKILL.md Verification
+
+When editing `SKILL.md`, verify frontmatter follows official spec:
+
+```yaml
+---
+name: <skill-name>        # required, 1-64 chars, lowercase alphanumeric with hyphens
+description: >           # required, multi-line with >
+license: MIT             # optional
+compatibility: opencode  # optional
+metadata:               # optional, string-to-string map
+  key: value
+---
+```
+
+**Rules:**
+- `name` must match directory and regex `^[a-z0-9]+(-[a-z0-9]+)*$`
+- `description` max 1024 chars
+- Unknown fields are ignored (keep it minimal)
+- Only recognize: `name`, `description`, `license`, `compatibility`, `metadata`
 
 ## Version Policy
 
