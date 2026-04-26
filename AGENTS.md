@@ -118,6 +118,11 @@ For reference, see other CodeSigils skills:
 - [OpenCode Agent Skills](https://opencode.ai/docs/agent-skills) — official skill format
 - [OpenCode Plugins](https://opencode.ai/docs/plugins) — for hooks (not in config)
 
+## Version Policy
+
+- Update `metadata.version` in SKILL.md frontmatter on each meaningful change
+- Document changes in README.md changelog
+
 ## Contribution
 
 1. Branch from `master`
