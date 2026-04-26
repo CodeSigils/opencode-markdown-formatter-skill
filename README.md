@@ -195,8 +195,6 @@ markdown-formatter/
 ├── references/
 │   ├── fix-tables.js           # Table separator normalizer
 │   └── .markdownlint.json      # Lint configuration
-├── scripts/
-│   └── post-write.sh           # Hook for auto-lint on write
 ├── test/
 │   ├── test-js.mjs             # JavaScript tests
 │   └── kitchensink.md          # Test data

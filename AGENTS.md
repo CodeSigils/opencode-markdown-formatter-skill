@@ -57,7 +57,7 @@ Use this format for all markdown tables:
 These rules are intentionally disabled in `.markdownlint.json`:
 
 - **MD040** — fenced-code-language (too strict for prose docs)
-- **MD055** — table-pipe-style (enforces consistent pipe spacing)
+- **MD055** — table-pipe-style (enforces trailing pipes on both sides)
 
 ### File structure
 
@@ -68,8 +68,6 @@ markdown-formatter/
 ├── references/
 │   ├── fix-tables.js           # Table formatter
 │   └── .markdownlint.json      # Lint config
-├── scripts/
-│   └── post-write.sh           # Optional auto-lint hook
 └── test/
     ├── test-js.mjs             # Tests
     └── kitchensink.md           # Test fixtures
@@ -80,7 +78,7 @@ markdown-formatter/
 - **Do not add `glob` as a dependency.** Use the built-in recursive file-walker in `fix-tables.js` instead.
 - **Do not reformat files that are already correct.** The formatter is idempotent — it skips unchanged files.
 - **Do not change the separator width formula** (`header.length - 1`) without running tests first.
-- **Do not enable MD040 or MD055** in the markdownlint config — they produce false positives on valid documentation.
+- **Do not enable MD040** in the markdownlint config — it produces false positives on valid documentation.
 
 ## Contribution Workflow
 
