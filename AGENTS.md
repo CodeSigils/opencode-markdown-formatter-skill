@@ -2,6 +2,19 @@
 
 Instructions for AI agents working in this repository.
 
+## Agent Best Practices
+
+Follow these principles in all work:
+
+1. **Read first, then act** — read existing files before editing. Understand the current state.
+2. **Verify before committing** — test changes. Run linters. Don't assume it works.
+3. **Use tools actively** — file read/search instead of grep/cat. Use `lint.sh --check` before push.
+4. **Be incremental** — commit logical chunks. One concern per commit.
+5. **Handle errors gracefully** — show actionable error messages. Don't hide failures.
+6. **Preserve working behavior** — don't break what's already correct. The formatter is idempotent.
+7. **Learn from mistakes** — if something fails, understand why before retrying.
+8. **Use best practices proactively** — add input validation, security checks, proper error handling without being asked.
+
 ## Official Standards
 
 When working in OpenCode skill repos, follow these conventions:
