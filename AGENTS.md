@@ -2,6 +2,15 @@
 
 Instructions for AI agents working in this repository.
 
+## Official Standards
+
+When working in OpenCode skill repos, follow these conventions:
+
+- **Skill structure**: Use `${SKILL_DIR}/SKILL.md` as the entry point
+- **Metadata**: Only recognize `name`, `description`, `license`, `compatibility`, `metadata` in frontmatter
+- **Entry commands**: Use `${OPENCODE_SKILL_DIR}/lint.sh` or documented CLI tools
+- **No config hooks**: Skills don't support `opencode.jsonc` hooks — use git pre-commit or plugins instead
+
 ## What This Repo Is
 
 This is an **OpenCode skill** for formatting Markdown to GitHub Flavored Markdown (GFM) standard.
@@ -82,6 +91,19 @@ markdown-formatter/
 - **Do not reformat already correct files** — the formatter is idempotent
 - **Do not change separator width formula** without running tests
 - **Do not enable MD040** — produces false positives
+
+## Contributing
+
+### Other Skills
+
+For reference, see other CodeSigils skills:
+
+- [hermes-markdown-lint-skill](https://github.com/CodeSigils/hermes-markdown-lint-skill) — hermes agent version with similar goals
+
+### Documentation
+
+- [OpenCode Agent Skills](https://opencode.ai/docs/agent-skills) — official skill format
+- [OpenCode Plugins](https://opencode.ai/docs/plugins) — for hooks (not in config)
 
 ## Contribution
 
