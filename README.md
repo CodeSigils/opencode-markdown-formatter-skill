@@ -74,7 +74,7 @@ Add to `.opencode/opencode.jsonc`:
 When the skill is active, the AI will format markdown like this:
 
 | Feature | Before | After |
-| :------ | :----- | :---- |
+| :------ | :---- | :--- |
 | Table separator | `\|------\|------\|` | `\| :--- \| :--- \|` (auto-widths) |
 | Table column width | `\|h1\|h2\|` | `\| h1 \| h2 \|` (matches header) |
 | Heading | `#Title` | `# Title` |
