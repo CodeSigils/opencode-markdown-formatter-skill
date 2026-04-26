@@ -29,7 +29,7 @@ git clone https://github.com/CodeSigils/opencode-markdown-formatter-skill.git ~/
 
 When you need to format markdown, tell the AI to load the skill:
 
-```
+```bash
 Load the markdown-formatter skill and format this file.
 ```
 
@@ -127,22 +127,25 @@ node references/fix-tables.js --stdout < file.md > fixed.md
 
 ## Auto-Lint on Write (Optional)
 
-To automatically lint markdown files after they're written, configure a hook in `.opencode/opencode.jsonc`:
+Since OpenCode skills don't support config file hooks, you can use a pre-commit hook at the project level:
 
-```json
-{
-  "hooks": {
-    "post_tool_call": [
-      {
-        "matcher": "write_file",
-        "command": "~/.config/opencode/skills/markdown-formatter/scripts/post-write.sh"
-      }
-    ]
-  }
-}
+```bash
+# Add to your project's .git/hooks/pre-commit
+#!/bin/bash
+git diff --staged --name-only | grep '\.md$' | while read file; do
+  ~/.config/opencode/skills/markdown-formatter/lint.sh "$file"
+  git add "$file"
+done
 ```
 
-> **Note:** Requires `jq` to be installed on your system.
+Or use a shell alias in your shell rc file:
+
+```bash
+# In ~/.bashrc or ~/.zshrc
+alias mdformat='~/.config/opencode/skills/markdown-formatter/lint.sh'
+```
+
+Then use: `mdformat filename.md`
 
 ## Testing
 
@@ -181,7 +184,7 @@ Other skills available in my [Hermes skills](https://github.com/CodeSigils/herme
 
 ## Directory Structure
 
-```
+```text
 markdown-formatter/
 ├── SKILL.md                    # Skill definition (for OpenCode)
 ├── README.md                   # This file
