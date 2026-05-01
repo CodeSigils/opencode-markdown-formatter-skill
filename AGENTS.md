@@ -134,6 +134,7 @@ metadata:               # optional, string-to-string map
 ```
 
 **Rules:**
+
 - `name` must match directory and regex `^[a-z0-9]+(-[a-z0-9]+)*$`
 - `description` max 1024 chars
 - Unknown fields are ignored (keep it minimal)
