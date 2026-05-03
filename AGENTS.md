@@ -60,6 +60,25 @@ Use `lint.sh` for all development tasks:
 node --test test/test-js.mjs
 ```
 
+### Table Validation (Critical)
+
+Before committing any markdown changes, validate table column consistency:
+
+```bash
+# Validate column counts in all tables
+node references/fix-tables.js --validate filename.md
+
+# Validate all .md in directory
+node references/fix-tables.js --validate --all docs/
+```
+
+This catches:
+- Header columns ≠ separator columns
+- Data rows with wrong column count
+- Pipes inside cells (unescaped)
+
+**Always run `--validate` before pushing to catch the exact issue that broke free-ai-models.md.**
+
 ## Conventions
 
 ### Table format

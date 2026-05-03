@@ -121,9 +121,39 @@ node references/fix-tables.js --all notes/
 # Check only (exits 0 if no changes needed)
 node references/fix-tables.js --check notes/file.md
 
+# Validate table column consistency (exits 1 if mismatches found)
+node references/fix-tables.js --validate notes/file.md
+
 # Output to stdout (for piping)
 node references/fix-tables.js --stdout < file.md > fixed.md
 ```
+
+## Preventing Broken Tables
+
+The most common table error is **column count mismatch** between the header, separator, and data rows. This often happens with:
+- Extra `|` characters in type definitions (e.g., `"tab" | "space"`)
+- Copy-paste errors in separator rows
+
+### Validate Before You Push
+
+```bash
+# Add to CI or pre-commit to catch broken tables
+node references/fix-tables.js --validate docs/
+```
+
+This validates:
+- Header columns match separator columns
+- All data rows have the correct number of columns
+- Pipes inside cells are properly escaped with `&#124;`
+
+### How to Escape Pipes in Tables
+
+If a table cell contains a pipe character, escape it to prevent column misparsing:
+
+| Before (broken)              | After (fixed)                      |
+| :--------------------------- | :--------------------------------- |
+| `"tab" \| "space"`           | `"tab" &#124; "space"`             |
+| `"lf" \| "crlf" \| "cr"`     | `"lf" &#124; "crlf" &#124; "cr"`   |
 
 ## Auto-Lint on Write (Optional)
 
