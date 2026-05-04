@@ -3,7 +3,7 @@ import assert from 'node:assert';
 import fs from 'node:fs';
 import path from 'node:path';
 
-const { _isSeparatorLine, _fixFileInContent } = await import('../references/fix-tables.js');
+const { _isSeparatorLine, _fixFileInContent, _isSeparatorAlreadyCorrect, _buildAlignedSeparator } = await import('../references/fix-tables.js');
 
 describe('_isSeparatorLine', () => {
   it('detects separator lines', () => {
@@ -88,5 +88,94 @@ describe('_fixFileInContent', () => {
     const content = '| A | B | C | D | E |\n|----|----|----|----|----|\n| 1 | 2 | 3 | 4 | 5 |\n';
     const { changed } = _fixFileInContent(content);
     assert.strictEqual(changed, 1);
+  });
+});
+
+describe('_isSeparatorAlreadyCorrect', () => {
+  it('accepts exact :---', () => {
+    assert.strictEqual(_isSeparatorAlreadyCorrect([' :--- ']), true);
+  });
+
+  it('accepts exact ---:', () => {
+    assert.strictEqual(_isSeparatorAlreadyCorrect([' ---: ']), true);
+  });
+
+  it('accepts exact :---:', () => {
+    assert.strictEqual(_isSeparatorAlreadyCorrect([' :---: ']), true);
+  });
+
+  it('accepts variable width left-aligned', () => {
+    assert.strictEqual(_isSeparatorAlreadyCorrect([' :--- ']), true);
+    assert.strictEqual(_isSeparatorAlreadyCorrect([' :----- ']), true);
+  });
+
+  it('accepts variable width right-aligned', () => {
+    assert.strictEqual(_isSeparatorAlreadyCorrect([' ---: ']), true);
+    assert.strictEqual(_isSeparatorAlreadyCorrect([' ----: ']), true);
+  });
+
+  it('accepts variable width center-aligned', () => {
+    assert.strictEqual(_isSeparatorAlreadyCorrect([' :--: ']), false);
+    assert.strictEqual(_isSeparatorAlreadyCorrect([' :---: ']), true);
+    assert.strictEqual(_isSeparatorAlreadyCorrect([' :----: ']), true);
+  });
+
+  it('rejects plain dashes (no colons)', () => {
+    assert.strictEqual(_isSeparatorAlreadyCorrect([' --- ']), false);
+  });
+
+  it('rejects too short', () => {
+    assert.strictEqual(_isSeparatorAlreadyCorrect([' -- ']), false);
+  });
+});
+
+describe('_buildAlignedSeparator', () => {
+  it('basic table', () => {
+    const result = _buildAlignedSeparator('| Name | Age |', '|------|-----|\n');
+    assert.ok(result.includes(':---'));
+  });
+
+  it('preserves right alignment', () => {
+    const result = _buildAlignedSeparator('| Name | Age |', '|------:-----:\n');
+    assert.ok(result.includes('---:'));
+  });
+
+  it('preserves center alignment', () => {
+    const result = _buildAlignedSeparator('| Name | Age |', '|:----:|-----:|\n');
+    assert.ok(result.includes(':---:'));
+  });
+
+  it('uses VSCode formula (stringWidth - 1)', () => {
+    const result = _buildAlignedSeparator('| Name |', '|-----|\n');
+    assert.ok(result.length >= 8);
+  });
+
+  it('longer header = more dashes', () => {
+    const short = _buildAlignedSeparator('| A |', '|---|\n');
+    const long = _buildAlignedSeparator('| Longer |', '|---|\n');
+    assert.ok(long.length > short.length);
+  });
+
+  it('minimum 3 dashes', () => {
+    const result = _buildAlignedSeparator('| A |', '|---|\n');
+    assert.ok(result.includes(':---'));
+  });
+
+  it('multiple cells', () => {
+    const result = _buildAlignedSeparator('| A | B | C |', '|---|---|---|\n');
+    const parts = result.split('|');
+    assert.strictEqual(parts.length, 5);
+  });
+});
+
+describe('string-width handling', () => {
+  it('handles emoji (double-width)', () => {
+    const result = _buildAlignedSeparator('| 😀 |', '|---|\n');
+    assert.ok(result.includes(':---'));
+  });
+
+  it('handles CJK (double-width)', () => {
+    const result = _buildAlignedSeparator('| 中文 |', '|---|\n');
+    assert.ok(result.includes(':---'));
   });
 });
