@@ -101,11 +101,14 @@ lint.sh --all <directory>
 # Check only (read-only, exit 0 if clean)
 lint.sh --check <path>
 
-# Dry-run: preview without applying
-lint.sh --dry-run <path>
+# Check fenced code blocks (exit 1 if issues found)
+lint.sh --fences <path>
 
 # Validate table columns (exit 1 if mismatches)
 lint.sh --validate <path>
+
+# Dry-run: preview without applying
+lint.sh --dry-run <path>
 
 # Run tests
 node --test test/test-js.mjs
@@ -202,13 +205,15 @@ opencode-markdown-formatter-skill/
 ├── SKILL.md                    # Skill definition (for OpenCode)
 ├── README.md                   # This file
 ├── CHANGELOG.md                # Keep a Changelog
-├── lint.sh                     # Wrapper script (fix-tables + markdownlint)
+├── lint.sh                     # Wrapper script (fix-tables + markdownlint + fence check)
 ├── CONTRIBUTING.md             # Contribution guidelines
 ├── LICENSE                     # MIT license
 ├── package.json                # npm scripts for convenience
 ├── .github/workflows/
 │   └── ci.yml                 # CI/CD pipeline
 ├── .gitignore                  # Git ignore rules
+├── scripts/
+│   └── check-fences.sh        # Fenced code block checker
 ├── references/
 │   ├── fix-tables.js           # Table separator normalizer
 │   └── .markdownlint.json      # Lint configuration
