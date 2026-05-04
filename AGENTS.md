@@ -56,6 +56,9 @@ Use `lint.sh` for all development tasks:
 # Check only (read-only, exit 0 if clean)
 ./lint.sh --check filename.md
 
+# Check code fences (empty openers, bad closers, mismatched counts)
+./lint.sh --fences filename.md
+
 # Dry-run: preview changes without applying
 ./lint.sh --dry-run filename.md
 
@@ -65,6 +68,22 @@ Use `lint.sh` for all development tasks:
 # Run tests
 node --test test/test-js.mjs
 ```
+
+### Code Fence Check
+
+Fenced code blocks are easily corrupted by shell tools (backtick content interpreted as command substitution). Before committing, always run:
+
+```bash
+./scripts/check-fences.sh <file-or-dir>
+```
+
+Or via lint.sh:
+
+```bash
+./lint.sh --fences <path>
+```
+
+Exit 0 = all fences clean. Checks: no empty openers, no bare-lang closers, matched backtick counts.
 
 ### Table Validation (Critical)
 
@@ -91,7 +110,7 @@ This catches:
 
 Use this format for all markdown tables:
 
-```
+```text
 | Column 1 | Column 2 |
 | :------- | :------- |
 | value    | value    |
@@ -111,7 +130,7 @@ Use this format for all markdown tables:
 
 ### File structure
 
-```
+```text
 opencode-markdown-formatter-skill/
 ├── SKILL.md                    # Skill definition
 ├── lint.sh                     # CLI wrapper (use this)
@@ -122,6 +141,8 @@ opencode-markdown-formatter-skill/
 ├── package.json              # Node.js metadata
 ├── .github/workflows/ci.yml  # CI pipeline
 ├── .gitignore                # Git ignore rules
+├── scripts/
+│   └── check-fences.sh        # Code fence verifier
 ├── references/
 │   ├── fix-tables.js           # Table formatter
 │   └── .markdownlint.json      # Lint config

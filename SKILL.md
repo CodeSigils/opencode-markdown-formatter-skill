@@ -133,7 +133,7 @@ Normalizes Markdown table separators from old-style `|------|------|` to GFM-com
 
 ### Location
 
-```
+```text
 ${OPENCODE_SKILL_DIR}/references/fix-tables.js
 ```
 
@@ -215,4 +215,44 @@ npx markdownlint-cli2 <path> --fix
 | Fix file | `${OPENCODE_SKILL_DIR}/lint.sh <path>` |
 | Fix all | `${OPENCODE_SKILL_DIR}/lint.sh --all .` |
 | Check only | `${OPENCODE_SKILL_DIR}/lint.sh --check <path>` |
+| Check fences | `${OPENCODE_SKILL_DIR}/lint.sh --fences <path>` |
+| Validate tables | `${OPENCODE_SKILL_DIR}/lint.sh --validate <path>` |
 | Manual steps | `node ${OPENCODE_SKILL_DIR}/references/fix-tables.js <path> && npx markdownlint-cli2 --config ${OPENCODE_SKILL_DIR}/references/.markdownlint.json <path> --fix` |
+
+## Verification
+
+Run the lint check to verify GFM compliance:
+
+```bash
+${OPENCODE_SKILL_DIR}/lint.sh --check <path>
+```
+
+Exit code 0 means no violations.
+
+### Code Fence Check
+
+Fenced code blocks are a common source of subtle corruption (e.g. backtick content interpreted as shell, broken opener/closer pairs). Run the dedicated fence checker:
+
+```bash
+${OPENCODE_SKILL_DIR}/lint.sh --fences <path>
+```
+
+Or directly:
+
+```bash
+${OPENCODE_SKILL_DIR}/scripts/check-fences.sh <path>
+```
+
+Exit code 0 = all fences clean. The checker verifies:
+- Every opener has a language tag (no empty ` ``` ` openers)
+- Every closer is bare (` ``` ` with nothing after)
+- Backtick/tilde count matches between opener and closer
+- No double-fence bug (adjacent fence lines merged as one block)
+
+### Manual Verification (one-liner)
+
+```bash
+grep -n '```' <path>
+```
+
+This shows all fence lines with line numbers — useful for quick visual inspection.
