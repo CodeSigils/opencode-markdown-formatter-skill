@@ -68,12 +68,12 @@ function _buildAlignedSeparator(headerLine, separatorLine) {
     const separatorCells = _parseCellsRaw(separatorLine.trim());
     const alignments = separatorCells.map(c => _getSeparatorAlignment(c.trim()));
 
+    const widths = headerCells.map(cell => Math.max(3, stringWidth(cell) - 1));
+
     const parts = [];
     for (let i = 0; i < headerCells.length; i++) {
         const align = alignments[i] || 'left';
-        // VSCode/marktext format: stringWidth (visual width) - 1, min 3 dashes
-        // Uses string-width to correctly handle emoji/CJK (double-width chars)
-        const cellWidth = Math.max(3, stringWidth(headerCells[i]) - 1);
+        const cellWidth = widths[i];
         let sep;
         if (align === 'center') {
             sep = ':' + '-'.repeat(cellWidth) + ':';
@@ -143,6 +143,11 @@ function _isSeparatorAlreadyCorrect(cells) {
     });
 }
 
+/**
+ * @param {string} filePath
+ * @param {{dryRun?: boolean, verbose?: boolean}} options
+ * @returns {number} Number of separators fixed
+ */
 function fixFile(filePath, options = {}) {
     const { dryRun = false, verbose = false } = options;
 
