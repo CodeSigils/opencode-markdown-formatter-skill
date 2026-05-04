@@ -107,6 +107,12 @@ lint.sh --all <directory>
 
 # Check only (read-only, exit 0 if clean)
 lint.sh --check <path>
+
+# Dry-run: preview changes without applying
+lint.sh --dry-run <path>
+
+# Validate table column consistency (exit 1 if mismatches)
+lint.sh --validate <path>
 ```
 
 ## fix-tables.js CLI Reference
@@ -218,6 +224,7 @@ Other skills available in my [Hermes skills](https://github.com/CodeSigils/herme
 markdown-formatter/
 ├── SKILL.md                    # Skill definition (for OpenCode)
 ├── README.md                   # This file
+├── CHANGELOG.md                # Keep a Changelog
 ├── lint.sh                     # Wrapper script (fix-tables + markdownlint)
 ├── CONTRIBUTING.md             # Contribution guidelines
 ├── LICENSE                     # MIT license
@@ -229,7 +236,7 @@ markdown-formatter/
 │   ├── test-js.mjs             # JavaScript tests
 │   └── kitchensink.md          # Test data
 └── .github/workflows/
-    └── ci.yml                  # CI/CD pipeline
+    └── ci.yml                 # CI/CD pipeline
 ```
 
 ## License
