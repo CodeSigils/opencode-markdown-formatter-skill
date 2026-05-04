@@ -121,7 +121,7 @@ The most common table error is **column count mismatch** between the header, sep
 
 ```bash
 # Add to CI or pre-commit to catch broken tables
-node references/fix-tables.js --validate docs/
+./lint.sh --validate docs/
 ```
 
 This validates:
@@ -198,7 +198,7 @@ Other skills available in my [Hermes skills](https://github.com/CodeSigils/herme
 ## Directory Structure
 
 ```text
-markdown-formatter/
+opencode-markdown-formatter-skill/
 ├── SKILL.md                    # Skill definition (for OpenCode)
 ├── README.md                   # This file
 ├── CHANGELOG.md                # Keep a Changelog
@@ -206,14 +206,16 @@ markdown-formatter/
 ├── CONTRIBUTING.md             # Contribution guidelines
 ├── LICENSE                     # MIT license
 ├── package.json                # npm scripts for convenience
+├── .github/workflows/
+│   └── ci.yml                 # CI/CD pipeline
+├── .gitignore                  # Git ignore rules
 ├── references/
 │   ├── fix-tables.js           # Table separator normalizer
 │   └── .markdownlint.json      # Lint configuration
 ├── test/
 │   ├── test-js.mjs             # JavaScript tests
 │   └── kitchensink.md          # Test data
-└── .github/workflows/
-    └── ci.yml                 # CI/CD pipeline
+└── .hermes/                    # Hermes agent config
 ```
 
 ## License
