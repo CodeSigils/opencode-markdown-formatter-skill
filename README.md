@@ -39,17 +39,10 @@ The skill instructs the AI to format markdown according to GFM standards automat
 
 ### Option 2: Use the Wrapper Script (Recommended)
 
-Run the lint.sh script directly:
+Run the CLI directly — see full reference below:
 
 ```bash
-# Fix a file
-~/.config/opencode/skills/markdown-formatter/lint.sh filename.md
-
-# Fix all .md in directory
-~/.config/opencode/skills/markdown-formatter/lint.sh --all .
-
-# Check only (read-only, exits 0 if clean)
-~/.config/opencode/skills/markdown-formatter/lint.sh --check filename.md
+~/.config/opencode/skills/markdown-formatter/lint.sh --check file.md
 ```
 
 ### Option 3: Use the Community Plugin (Live Formatting)
@@ -96,10 +89,10 @@ When the skill is active, the AI will format markdown like this:
 
 ## lint.sh Reference
 
-The wrapper script runs the full pipeline: fix-tables.js + markdownlint-cli2
+All-in-one wrapper: fix-tables.js + markdownlint-cli2
 
 ```bash
-# Fix specific file
+# Fix file or directory
 lint.sh <path>
 
 # Fix all .md in directory
@@ -108,30 +101,14 @@ lint.sh --all <directory>
 # Check only (read-only, exit 0 if clean)
 lint.sh --check <path>
 
-# Dry-run: preview changes without applying
+# Dry-run: preview without applying
 lint.sh --dry-run <path>
 
-# Validate table column consistency (exit 1 if mismatches)
+# Validate table columns (exit 1 if mismatches)
 lint.sh --validate <path>
-```
 
-## fix-tables.js CLI Reference
-
-```bash
-# Fix specific file
-node references/fix-tables.js notes/file.md
-
-# Fix all .md in directory
-node references/fix-tables.js --all notes/
-
-# Check only (exits 0 if no changes needed)
-node references/fix-tables.js --check notes/file.md
-
-# Validate table column consistency (exits 1 if mismatches found)
-node references/fix-tables.js --validate notes/file.md
-
-# Output to stdout (for piping)
-node references/fix-tables.js --stdout < file.md > fixed.md
+# Run tests
+node --test test/test-js.mjs
 ```
 
 ## Preventing Broken Tables
