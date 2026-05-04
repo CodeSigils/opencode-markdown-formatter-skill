@@ -53,4 +53,40 @@ describe('_fixFileInContent', () => {
     const lines = result.split('\n');
     assert.strictEqual(lines[0].length, lines[1].length);
   });
+
+  it('handles empty cells', () => {
+    const content = '| A | B | C |\n|---|---|---|\n| x | | z |\n';
+    const { content: result, changed } = _fixFileInContent(content);
+    assert.strictEqual(changed, 1);
+    assert.ok(result.includes('| :--- | :--- | :--- |'));
+  });
+
+  it('handles multiple tables', () => {
+    const content = '| T1 | T1 |\n|---|---|\n| a | b |\n\n| T2 |\n|---|\n| c |\n';
+    const { content: result, changed } = _fixFileInContent(content);
+    assert.strictEqual(changed, 2);
+    assert.ok(result.includes('| :--- | :--- |'));
+    assert.ok(result.includes('| :--- |'));
+  });
+
+  it('preserves cell content', () => {
+    const content = '| **bold** | `code` | [link](url) |\n|----------|--------|----------|\n| text    | more   | data     |\n';
+    const { content: result, changed } = _fixFileInContent(content);
+    assert.strictEqual(changed, 1);
+    assert.ok(result.includes('**bold**'));
+    assert.ok(result.includes('`code`'));
+    assert.ok(result.includes('[link](url)'));
+  });
+
+  it('handles trailing pipes', () => {
+    const content = '| A | B |\n|----|----|\n| x | y |\n';
+    const { content: result } = _fixFileInContent(content);
+    assert.ok(result.includes('|'));
+  });
+
+  it('handles many columns', () => {
+    const content = '| A | B | C | D | E |\n|----|----|----|----|----|\n| 1 | 2 | 3 | 4 | 5 |\n';
+    const { changed } = _fixFileInContent(content);
+    assert.strictEqual(changed, 1);
+  });
 });

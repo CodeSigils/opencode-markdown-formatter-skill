@@ -62,16 +62,18 @@ resolve_npx() {
 NPX="$(resolve_npx)"
 
 usage() {
-    echo "Usage: $0 [--check] [--all] [--validate] <path>"
+    echo "Usage: $0 [--check] [--all] [--validate] [--dry-run] <path>"
     echo "  --check      Read-only check (exit 0 if clean)"
     echo "  --all        Treat <path> as a directory, fix all .md files"
     echo "  --validate   Validate table column consistency (exit 1 if mismatches)"
+    echo "  --dry-run    Preview changes without applying them"
     exit 1
 }
 
 CHECK=false
 ALL=false
 VALIDATE=false
+DRY_RUN=false
 TARGET=""
 
 while [[ $# -gt 0 ]]; do
@@ -79,6 +81,7 @@ while [[ $# -gt 0 ]]; do
         --check)     CHECK=true;    shift ;;
         --all)       ALL=true;      shift ;;
         --validate)  VALIDATE=true; shift ;;
+        --dry-run|-n) DRY_RUN=true; shift ;;
         -*)          usage ;;
         *)           TARGET="$1";    shift ;;
     esac
@@ -120,13 +123,26 @@ run_npx() {
     fi
 }
 
-# Step 1: Normalize table separators (skip if --check mode)
-if [[ "$CHECK" != true ]]; then
+# Step 1: Normalize table separators (skip if --check or --dry-run mode)
+if [[ "$CHECK" != true && "$DRY_RUN" != true ]]; then
     if [[ -d "$TARGET" ]]; then
         find "$TARGET" -name "*.md" -exec node "$FIX_TABLES" {} \;
     else
         node "$FIX_TABLES" "$TARGET"
     fi
+fi
+
+# Dry-run mode: just check what would be fixed
+if [[ "$DRY_RUN" == true ]]; then
+    echo "=== Dry Run Mode ==="
+    echo "Would fix tables with: node $FIX_TABLES"
+    if [[ -d "$TARGET" ]]; then
+        find "$TARGET" -name "*.md" -exec node "$FIX_TABLES" --check {} \;
+    else
+        node "$FIX_TABLES" --check "$TARGET"
+    fi
+    echo "Would run markdownlint with --fix"
+    exit 0
 fi
 
 # Step 2: markdownlint with skill config

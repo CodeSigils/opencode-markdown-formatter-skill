@@ -7,6 +7,7 @@ description: >
 license: MIT
 compatibility: opencode
 metadata:
+  version: "1.0.0"
   argument-hint: "{filename} or --all {directory}"
   category: "devtools"
 ---

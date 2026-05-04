@@ -67,6 +67,31 @@ cat file.md | node references/fix-tables.js --stdout > fixed.md
 - No trailing whitespace
 - Max line length: 88 (via mdformat --wrap=88)
 
+## Commit Messages
+
+Follow [Conventional Commits](https://www.conventionalcommits.org/):
+
+```bash
+# Types
+feat:     New feature
+fix:      Bug fix
+docs:     Documentation only
+refactor: Code change that neither fixes nor adds
+test:     Adding or updating tests
+chore:    Maintenance
+
+# Examples
+feat: add dry-run flag to lint.sh
+fix: handle empty cells in tables
+docs: update usage examples
+```
+
+## Release Process
+
+1. Update version in `SKILL.md` metadata
+2. Add entry to `CHANGELOG.md`
+3. Tag release: `git tag v1.0.1 && git push --tags`
+
 ## Reporting Issues
 
 Please open an issue on GitHub with:
