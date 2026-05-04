@@ -72,10 +72,10 @@ Before committing any markdown changes, validate table column consistency:
 
 ```bash
 # Validate column counts in all tables
-node references/fix-tables.js --validate filename.md
+./lint.sh --validate filename.md
 
 # Validate all .md in directory
-node references/fix-tables.js --validate --all docs/
+./lint.sh --validate --all docs/
 ```
 
 This catches:
@@ -112,7 +112,7 @@ Use this format for all markdown tables:
 ### File structure
 
 ```
-markdown-formatter/
+opencode-markdown-formatter-skill/
 ├── SKILL.md                    # Skill definition
 ├── lint.sh                     # CLI wrapper (use this)
 ├── CHANGELOG.md               # Keep a Changelog format
@@ -120,12 +120,14 @@ markdown-formatter/
 ├── README.md                 # Documentation
 ├── LICENSE                  # MIT license
 ├── package.json              # Node.js metadata
+├── .github/workflows/ci.yml  # CI pipeline
+├── .gitignore                # Git ignore rules
 ├── references/
 │   ├── fix-tables.js           # Table formatter
 │   └── .markdownlint.json      # Lint config
 └── test/
     ├── test-js.mjs             # Tests
-    └── kitchensink.md           # Test fixtures
+    └── kitchensink.md         # Test fixtures
 ```
 
 ## What to Avoid
