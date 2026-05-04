@@ -56,6 +56,12 @@ Use `lint.sh` for all development tasks:
 # Check only (read-only, exit 0 if clean)
 ./lint.sh --check filename.md
 
+# Dry-run: preview changes without applying
+./lint.sh --dry-run filename.md
+
+# Validate table columns (exit 1 if mismatches)
+./lint.sh --validate filename.md
+
 # Run tests
 node --test test/test-js.mjs
 ```
@@ -108,7 +114,12 @@ Use this format for all markdown tables:
 ```
 markdown-formatter/
 ├── SKILL.md                    # Skill definition
-├── lint.sh                     # Wrapper (use this)
+├── lint.sh                     # CLI wrapper (use this)
+├── CHANGELOG.md               # Keep a Changelog format
+├── CONTRIBUTING.md            # Contribution guidelines
+├── README.md                 # Documentation
+├── LICENSE                  # MIT license
+├── package.json              # Node.js metadata
 ├── references/
 │   ├── fix-tables.js           # Table formatter
 │   └── .markdownlint.json      # Lint config
@@ -162,7 +173,8 @@ metadata:               # optional, string-to-string map
 ## Version Policy
 
 - Update `metadata.version` in SKILL.md frontmatter on each meaningful change
-- Document changes in README.md changelog
+- Document changes in CHANGELOG.md
+- Test before commit: `./lint.sh --check .` and `node --test test/test-js.mjs`
 
 ## Contribution
 
