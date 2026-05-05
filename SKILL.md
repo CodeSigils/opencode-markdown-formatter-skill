@@ -102,8 +102,6 @@ markdownlint implements MD001–MD060 rules. Key rules enforced:
 | MD035 | hr-style | Horizontal rule style `---` |
 | MD046 | code-block-style | Use fenced code blocks |
 | MD048 | code-fence-style | Use backticks for code fences |
-| MD055 | table-pipe-style | Table pipes on both sides |
-| MD060 | table-column-style | Table separator style `---` |
 
 Rules **disabled** (too strict for prose documentation):
 
@@ -244,6 +242,7 @@ ${OPENCODE_SKILL_DIR}/scripts/check-fences.sh <path>
 ```
 
 Exit code 0 = all fences clean. The checker verifies:
+
 - Every opener has a language tag (no empty ` ``` ` openers)
 - Every closer is bare (` ``` ` with nothing after)
 - Backtick/tilde count matches between opener and closer

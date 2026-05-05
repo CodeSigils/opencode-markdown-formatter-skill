@@ -117,6 +117,7 @@ node --test test/test-js.mjs
 ## Preventing Broken Tables
 
 The most common table error is **column count mismatch** between the header, separator, and data rows. This often happens with:
+
 - Extra `|` characters in type definitions (e.g., `"tab" | "space"`)
 - Copy-paste errors in separator rows
 
@@ -128,6 +129,7 @@ The most common table error is **column count mismatch** between the header, sep
 ```
 
 This validates:
+
 - Header columns match separator columns
 - All data rows have the correct number of columns
 - Pipes inside cells are properly escaped with `&#124;`

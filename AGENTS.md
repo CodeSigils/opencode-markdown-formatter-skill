@@ -98,6 +98,7 @@ Before committing any markdown changes, validate table column consistency:
 ```
 
 This catches:
+
 - Header columns ≠ separator columns
 - Data rows with wrong column count
 - Pipes inside cells (unescaped)
