@@ -36,7 +36,7 @@ This skill uses **npx** which comes with Node.js.
 ### One-liner (recommended)
 
 ```bash
-${OPENCODE_SKILL_DIR}/lint.sh <path>
+./lint.sh <path>
 ```
 
 This runs the full two-step pipeline in one command: fix tables, then lint and auto-fix everything else.
@@ -44,9 +44,9 @@ This runs the full two-step pipeline in one command: fix tables, then lint and a
 ### Options
 
 ```bash
-${OPENCODE_SKILL_DIR}/lint.sh <path>         # Fix file or directory
-${OPENCODE_SKILL_DIR}/lint.sh --check <path>  # Read-only check (exit 0 if clean)
-${OPENCODE_SKILL_DIR}/lint.sh --all <dir>     # Fix all .md in directory
+./lint.sh <path>         # Fix file or directory
+./lint.sh --check <path>  # Read-only check (exit 0 if clean)
+./lint.sh --all <dir>     # Fix all .md in directory
 ```
 
 ### Two-step pipeline (manual)
@@ -54,7 +54,7 @@ ${OPENCODE_SKILL_DIR}/lint.sh --all <dir>     # Fix all .md in directory
 If you prefer running steps separately:
 
 ```bash
-node ${OPENCODE_SKILL_DIR}/references/fix-tables.js <path> && npx markdownlint-cli2 --config ${OPENCODE_SKILL_DIR}/references/.markdownlint.json <path> --fix
+node ./references/fix-tables.js <path> && npx markdownlint-cli2 --config ./references/.markdownlint.json <path> --fix
 ```
 
 Step 1 normalizes table separators to `| :--- | :--- |` left-aligned style.
@@ -68,7 +68,7 @@ Step 2 fixes everything else.
 2. Run the fix command:
 
 ```bash
-${OPENCODE_SKILL_DIR}/lint.sh <path>
+./lint.sh <path>
 ```
 
 Done — the file is GFM-compliant.
@@ -76,7 +76,7 @@ Done — the file is GFM-compliant.
 ### 2. Batch Fix All Markdown in a Project
 
 ```bash
-${OPENCODE_SKILL_DIR}/lint.sh --all .
+./lint.sh --all .
 ```
 
 ### 3. CI / Pre-commit Check (read-only)
@@ -132,20 +132,20 @@ Normalizes Markdown table separators from old-style `|------|------|` to GFM-com
 ### Location
 
 ```text
-${OPENCODE_SKILL_DIR}/references/fix-tables.js
+./references/fix-tables.js
 ```
 
 ### Usage
 
 ```bash
 # Fix specific file
-node ${OPENCODE_SKILL_DIR}/references/fix-tables.js notes/file.md
+node ./references/fix-tables.js notes/file.md
 
 # Fix all .md in directory
-node ${OPENCODE_SKILL_DIR}/references/fix-tables.js --all .
+node ./references/fix-tables.js --all .
 
 # Check only (read-only, exit 0 if clean)
-node ${OPENCODE_SKILL_DIR}/references/fix-tables.js --check notes/file.md
+node ./references/fix-tables.js --check notes/file.md
 ```
 
 ### How It Works
@@ -155,6 +155,28 @@ node ${OPENCODE_SKILL_DIR}/references/fix-tables.js --check notes/file.md
 3. Replaces old-style separator with `| :--- |` matching the exact column count
 4. Auto-width: calculates width based on header column lengths
 5. Leaves all data rows and already-correct separators untouched
+
+### OpenCode Does Not Support Hooks
+
+> **Note:** OpenCode does NOT support hooks in `opencode.jsonc`. Do not document OpenCode hook configs — use git pre-commit hooks or shell aliases instead.
+
+If you want auto-formatting on write, use a git pre-commit hook:
+
+```bash
+# Add to .git/hooks/pre-commit
+#!/bin/bash
+git diff --staged --name-only | grep '\.md$' | while read file; do
+  ~/.config/opencode/skills/markdown-formatter/lint.sh "$file"
+  git add "$file"
+done
+```
+
+Or use a shell alias in your shell rc file:
+
+```bash
+# In ~/.bashrc or ~/.zshrc
+alias mdformat='~/.config/opencode/skills/markdown-formatter/lint.sh'
+```
 
 ## Configuration
 
@@ -194,7 +216,7 @@ curl -fsSL https://fnm.install | bash
 Run from the project root or pass the config explicitly:
 
 ```bash
-npx markdownlint-cli2 --config ${OPENCODE_SKILL_DIR}/references/.markdownlint.json <path> --fix
+npx markdownlint-cli2 --config ./references/.markdownlint.json <path> --fix
 ```
 
 ### `--fix` does not fix everything in one pass
@@ -210,19 +232,19 @@ npx markdownlint-cli2 <path> --fix
 
 | Task | Command |
 | :--- | :------ |
-| Fix file | `${OPENCODE_SKILL_DIR}/lint.sh <path>` |
-| Fix all | `${OPENCODE_SKILL_DIR}/lint.sh --all .` |
-| Check only | `${OPENCODE_SKILL_DIR}/lint.sh --check <path>` |
-| Check fences | `${OPENCODE_SKILL_DIR}/lint.sh --fences <path>` |
-| Validate tables | `${OPENCODE_SKILL_DIR}/lint.sh --validate <path>` |
-| Manual steps | `node ${OPENCODE_SKILL_DIR}/references/fix-tables.js <path> && npx markdownlint-cli2 --config ${OPENCODE_SKILL_DIR}/references/.markdownlint.json <path> --fix` |
+| Fix file | `./lint.sh <path>` |
+| Fix all | `./lint.sh --all .` |
+| Check only | `./lint.sh --check <path>` |
+| Check fences | `./lint.sh --fences <path>` |
+| Validate tables | `./lint.sh --validate <path>` |
+| Manual steps | `node ./references/fix-tables.js <path> && npx markdownlint-cli2 --config ./references/.markdownlint.json <path> --fix` |
 
 ## Verification
 
 Run the lint check to verify GFM compliance:
 
 ```bash
-${OPENCODE_SKILL_DIR}/lint.sh --check <path>
+./lint.sh --check <path>
 ```
 
 Exit code 0 means no violations.
@@ -232,13 +254,13 @@ Exit code 0 means no violations.
 Fenced code blocks are a common source of subtle corruption (e.g. backtick content interpreted as shell, broken opener/closer pairs). Run the dedicated fence checker:
 
 ```bash
-${OPENCODE_SKILL_DIR}/lint.sh --fences <path>
+./lint.sh --fences <path>
 ```
 
 Or directly:
 
 ```bash
-${OPENCODE_SKILL_DIR}/scripts/check-fences.sh <path>
+./scripts/check-fences.sh <path>
 ```
 
 Exit code 0 = all fences clean. The checker verifies:

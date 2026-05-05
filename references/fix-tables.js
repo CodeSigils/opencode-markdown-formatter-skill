@@ -17,6 +17,10 @@
 
 const fs = require('fs');
 const path = require('path');
+
+// Note: Using console.log/error (not logging library) is correct for CLI tools.
+// Logging libraries are for server applications needing structured logs.
+// CLI tools should output to stdout/stderr directly.
 // Uses string-width for visual width (emoji/CJK are double-width)
 let stringWidth;
 try {
