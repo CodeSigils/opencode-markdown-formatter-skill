@@ -48,14 +48,14 @@ pad-tables.js  →  widens all rows to match column widths
 markdownlint   →  verifies MD060 compliance
 ```
 
-| Feature            | Before               | After                              |
-| :---------------- | :------------------- | :--------------------------------- |
+| Feature           | Before              | After                             |
+| : ----------------- | : ------------------- | : --------------------------------- |
 | Table separator    | `\|------\|------\|` | `\| :--- \| :--- \|` (auto-widths) |
-| Table column width | `\|h1\|h2\|`         | `\| h1 \| h2 \|` (matches header)  |
-| Table pipe align   | `\| a \|Long\|`      | `\| a    \| Long \|` (MD060)       |
-| Heading            | `#Title`             | `# Title`                          |
-| Link               | `https://url`        | `[text](https://url)`              |
-| List               | `* Item`             | `- Item`                           |
+| Table column width | `\|h1\|h2\|`        | `\| h1 \| h2 \|` (matches header)  |
+| Table pipe align   | `\| a \|Long\|`     | `\| a    \| Long \|` (MD060)      |
+| Heading            | `#Title`            | `# Title`                         |
+| Link               | `https://url`       | `[text](https://url)`             |
+| List               | `* Item`            | `- Item`                          |
 
 ## Features
 
