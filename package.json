@@ -11,7 +11,8 @@
     "format:lint:all": "npx markdownlint-cli2 . --fix"
   },
   "devDependencies": {
-    "markdownlint-cli2": "^1.1.0"
+    "markdownlint-cli2": "^0.22.1",
+    "string-width": "^7.2.0"
   },
   "keywords": ["markdown", "gfm", "formatter", "lint"],
   "license": "MIT"

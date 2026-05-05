@@ -19,19 +19,33 @@ Follow these principles in all work:
 
 When working in OpenCode skill repos, follow these conventions:
 
-- **Skill structure**: Use `${SKILL_DIR}/SKILL.md` as the entry point
+- **Skill structure**: Use `${OPENCODE_SKILL_DIR}/SKILL.md` as the entry point
 - **Metadata**: Only recognize `name`, `description`, `license`, `compatibility`, `metadata` in frontmatter
 - **Entry commands**: Use `${OPENCODE_SKILL_DIR}/lint.sh` or documented CLI tools
-- **No config hooks**: Skills don't support `opencode.jsonc` hooks — use git pre-commit or plugins instead
+- **No config hooks**: OpenCode skills don't support `opencode.jsonc` hooks — use git pre-commit or shell aliases instead
+- **npx resolution**: `lint.sh` resolves npx cross-platform automatically (corepack, homebrew, fnm, zed/node)
 
 ## What This Repo Is
 
 This is an **OpenCode skill** for formatting Markdown to GitHub Flavored Markdown (GFM) standard.
 
+The skill has two parts:
+
 - `SKILL.md` — skill definition (for OpenCode)
 - `lint.sh` — CLI wrapper (recommended entry point)
-- `references/fix-tables.js` — table separator normalizer
+- `references/fix-tables.js` — normalizes table separators to `:---` format
+- `references/pad-tables.js` — pads all table rows so pipes align with header columns (MD060)
 - `references/.markdownlint.json` — lint configuration
+
+## Three-Step Pipeline
+
+```
+fix-tables.js  →  normalizes separator format (e.g. |---| → | :--- |)
+pad-tables.js  →  widens all rows to match column widths
+markdownlint   →  verifies MD060 compliance and fixes everything else
+```
+
+**Why two table scripts?** `fix-tables.js` only touches the separator row. `pad-tables.js` rewrites every row — header, separator, and data — so all pipes align. markdownlint's MD060 (table-column-style) checks every `|` in every row.
 
 ## For OpenCode Agents
 
@@ -69,42 +83,6 @@ Use `lint.sh` for all development tasks:
 node --test test/test-js.mjs
 ```
 
-### Code Fence Check
-
-Fenced code blocks are easily corrupted by shell tools (backtick content interpreted as command substitution). Before committing, always run:
-
-```bash
-./scripts/check-fences.sh <file-or-dir>
-```
-
-Or via lint.sh:
-
-```bash
-./lint.sh --fences <path>
-```
-
-Exit 0 = all fences clean. Checks: no empty openers, no bare-lang closers, matched backtick counts.
-
-### Table Validation (Critical)
-
-Before committing any markdown changes, validate table column consistency:
-
-```bash
-# Validate column counts in all tables
-./lint.sh --validate filename.md
-
-# Validate all .md in directory
-./lint.sh --validate --all docs/
-```
-
-This catches:
-
-- Header columns ≠ separator columns
-- Data rows with wrong column count
-- Pipes inside cells (unescaped)
-
-**Always run `--validate` before pushing to catch the exact issue that broke free-ai-models.md.**
-
 ## Conventions
 
 ### Table format
@@ -113,7 +91,7 @@ Use this format for all markdown tables:
 
 ```text
 | Column 1 | Column 2 |
-| :------- | :------- |
+| :------ | :------- |
 | value    | value    |
 ```
 
@@ -127,6 +105,7 @@ Use this format for all markdown tables:
 | :--- | :----- | :--- |
 | MD040 | disabled | Too strict for prose docs |
 | MD055 | enabled | Trailing pipes on both sides |
+| MD060 | enabled | Table pipes align with header columns |
 | MD013 | disabled | Prose lines are naturally longer |
 
 ### File structure
@@ -139,13 +118,15 @@ opencode-markdown-formatter-skill/
 ├── CONTRIBUTING.md            # Contribution guidelines
 ├── README.md                 # Documentation
 ├── LICENSE                  # MIT license
-├── package.json              # Node.js metadata
+├── package.json              # Node.js metadata (pnpm)
+├── pnpm-lock.yaml            # Lockfile (commit this)
 ├── .github/workflows/ci.yml  # CI pipeline
 ├── .gitignore                # Git ignore rules
 ├── scripts/
 │   └── check-fences.sh        # Code fence verifier
 ├── references/
-│   ├── fix-tables.js           # Table formatter
+│   ├── fix-tables.js           # Separator normalizer
+│   ├── pad-tables.js           # Row aligner (MD060)
 │   └── .markdownlint.json      # Lint config
 └── test/
     ├── test-js.mjs             # Tests
@@ -158,19 +139,42 @@ opencode-markdown-formatter-skill/
 - **Do not reformat already correct files** — the formatter is idempotent
 - **Do not change separator width formula** without running tests
 - **Do not enable MD040** — produces false positives
+- **Do not use hermes-specific conventions** — this is an OpenCode skill
 
-## Contributing
+## Troubleshooting
 
-### Other Skills
+### Common Errors
 
-For reference, see other CodeSigils skills:
+| Error | Cause | Fix |
+| :--- | :---- | :--- |
+| MD018: No space after hash | Missing space after `#` | Add space: `## Heading` |
+| MD047: Single trailing newline | File doesn't end with newline | Add blank line at end |
+| MD055: No trailing pipe | Table row missing trailing pipe | Add trailing pipe |
+| MD056: Table column count | Separator width mismatch | Run `fix-tables.js` |
+| MD060: Table pipe position | Pipes not aligned | Run `pad-tables.js` |
 
-- [hermes-markdown-lint-skill](https://github.com/CodeSigils/hermes-markdown-lint-skill) — hermes agent version with similar goals
+### fix-tables.js / pad-tables.js Issues
 
-### Documentation
+**Problem**: `stringWidth is not a function` or `stringWidth is not defined`.
 
-- [OpenCode Agent Skills](https://opencode.ai/docs/skills) — official skill format
-- [OpenCode Plugins](https://opencode.ai/docs/plugins) — for hooks (not in config)
+**Cause**: `string-width` v7+ is ESM-only. pnpm's CommonJS `require()` returns `{ __esModule, default }` — not the function directly.
+
+**Fix**: Both scripts use `m.default ?? m` to handle ESM interop. If the fallback fires (no `string-width` installed), it degrades to code-unit counting — wrong for emoji/CJK but functional for ASCII.
+
+```bash
+# Install string-width if missing
+pnpm add -D string-width
+```
+
+### pnpm vs npm
+
+This repo uses `pnpm`. If you see `ERR_PNPM_NO_MATCHING_VERSION`, update the version in `package.json`:
+
+```bash
+# Check latest version
+pnpm view markdownlint-cli2 version
+pnpm view string-width version
+```
 
 ## SKILL.md Verification
 
@@ -200,9 +204,51 @@ metadata:               # optional, string-to-string map
 - Document changes in CHANGELOG.md
 - Test before commit: `./lint.sh --check .` and `node --test test/test-js.mjs`
 
-## Contribution
+## Contributing
 
-1. Branch from `master`
-2. Make changes
-3. Test: `./lint.sh --check .` and `node --test test/test-js.mjs`
-4. Push and open PR against `master`
+### Other Skills
+
+For reference, see other CodeSigils skills:
+
+- [hermes-markdown-lint-skill](https://github.com/CodeSigils/hermes-markdown-lint-skill) — hermes agent version with similar goals
+
+### Documentation
+
+- [OpenCode Agent Skills](https://opencode.ai/docs/skills) — official skill format
+- [OpenCode Plugins](https://opencode.ai/docs/plugins) — for hooks (not in config)
+
+## Code Fence Check
+
+Fenced code blocks are easily corrupted by shell tools (backtick content interpreted as command substitution). Before committing, always run:
+
+```bash
+./scripts/check-fences.sh <file-or-dir>
+```
+
+Or via lint.sh:
+
+```bash
+./lint.sh --fences <path>
+```
+
+Exit 0 = all fences clean. Checks: no empty openers, no bare-lang closers, matched backtick counts.
+
+## Table Validation (Critical)
+
+Before committing any markdown changes, validate table column consistency:
+
+```bash
+# Validate column counts in all tables
+./lint.sh --validate filename.md
+
+# Validate all .md in directory
+./lint.sh --validate --all docs/
+```
+
+This catches:
+
+- Header columns ≠ separator columns
+- Data rows with wrong column count
+- Pipes inside cells (unescaped)
+
+**Always run `--validate` before pushing to catch broken tables.**

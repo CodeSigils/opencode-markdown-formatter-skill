@@ -12,25 +12,27 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: "20"
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install
 
       - name: Run JS tests
-        run: |
-          node --test test-js.mjs
+        run: node --test test/test-js.mjs
+
+      - name: Run pad-tables on test fixture
+        run: node references/pad-tables.js test/kitchensink.md
 
       - name: Lint skill files
         run: |
-          npx markdownlint-cli2 SKILL.md README.md --config references/.markdownlint.json
-          npx markdownlint-cli2 . --config references/.markdownlint.json
-
-  markdown-format:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Check markdown format
-        run: |
-          npx markdownlint-cli2 . --config references/.markdownlint.json || true
+          npx markdownlint-cli2 SKILL.md README.md AGENTS.md --config references/.markdownlint.json
+          npx markdownlint-cli2 test/kitchensink.md --config references/.markdownlint.json

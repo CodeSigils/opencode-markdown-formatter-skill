@@ -13,6 +13,7 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 FIX_TABLES="$SCRIPT_DIR/references/fix-tables.js"
+PAD_TABLES="$SCRIPT_DIR/references/pad-tables.js"
 CONFIG="$SCRIPT_DIR/references/.markdownlint.json"
 CHECK_FENCES="$SCRIPT_DIR/scripts/check-fences.sh"
 
@@ -141,20 +142,35 @@ if [[ "$CHECK" != true && "$DRY_RUN" != true ]]; then
     fi
 fi
 
+# Step 2: Pad table data rows so pipes align with header columns (skip if --check)
+if [[ "$CHECK" != true && "$DRY_RUN" != true ]]; then
+    if [[ -d "$TARGET" ]]; then
+        find "$TARGET" -name "*.md" -exec node "$PAD_TABLES" {} \;
+    else
+        node "$PAD_TABLES" "$TARGET"
+    fi
+fi
+
 # Dry-run mode: just check what would be fixed
 if [[ "$DRY_RUN" == true ]]; then
     echo "=== Dry Run Mode ==="
-    echo "Would fix tables with: node $FIX_TABLES"
+    echo "Would fix table separators with: node $FIX_TABLES"
     if [[ -d "$TARGET" ]]; then
         find "$TARGET" -name "*.md" -exec node "$FIX_TABLES" --check {} \;
     else
         node "$FIX_TABLES" --check "$TARGET"
     fi
+    echo "Would pad table rows with: node $PAD_TABLES"
+    if [[ -d "$TARGET" ]]; then
+        find "$TARGET" -name "*.md" -exec node "$PAD_TABLES" --check {} \;
+    else
+        node "$PAD_TABLES" --check "$TARGET"
+    fi
     echo "Would run markdownlint with --fix"
     exit 0
 fi
 
-# Step 2: markdownlint with skill config
+# Step 3: markdownlint with skill config
 if [[ "$CHECK" == true ]]; then
     if [[ -d "$TARGET" ]]; then
         run_npx markdownlint-cli2 --config "$CONFIG" $(find "$TARGET" -name "*.md" -type f)

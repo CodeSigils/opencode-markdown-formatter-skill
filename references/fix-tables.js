@@ -22,9 +22,11 @@ const path = require('path');
 // Logging libraries are for server applications needing structured logs.
 // CLI tools should output to stdout/stderr directly.
 // Uses string-width for visual width (emoji/CJK are double-width)
+// Handle ESM interop: pnpm returns { __esModule, default } for ESM packages
 let stringWidth;
 try {
-    stringWidth = require('string-width');
+    const m = require("string-width");
+    stringWidth = m.default ?? m;
 } catch {
     // Fallback if not installed - counts code units instead of visual width
     stringWidth = s => [...s].length;

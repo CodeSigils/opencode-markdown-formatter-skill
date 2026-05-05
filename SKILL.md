@@ -1,13 +1,14 @@
 ---
 name: markdown-formatter
 description: >
-  Format markdown to GFM standard. Uses fix-tables.js for table separators
-  and markdownlint-cli2 for full linting. Run after creating or editing
-  any .md file to enforce consistent formatting.
+  Format markdown to GFM standard. Uses fix-tables.js for table separators,
+  pad-tables.js for row alignment (MD060), and markdownlint-cli2 for full
+  linting. Run after creating or editing any .md file to enforce consistent
+  formatting.
 license: MIT
 compatibility: opencode
 metadata:
-  version: "1.0.0"
+  version: "1.1.0"
   argument-hint: "{filename} or --all {directory}"
   category: "devtools"
 ---
@@ -54,11 +55,14 @@ This runs the full two-step pipeline in one command: fix tables, then lint and a
 If you prefer running steps separately:
 
 ```bash
-node ./references/fix-tables.js <path> && npx markdownlint-cli2 --config ./references/.markdownlint.json <path> --fix
+node ./references/fix-tables.js <path> && \
+node ./references/pad-tables.js <path> && \
+npx markdownlint-cli2 --config ./references/.markdownlint.json <path> --fix
 ```
 
 Step 1 normalizes table separators to `| :--- | :--- |` left-aligned style.
-Step 2 fixes everything else.
+Step 2 pads data rows so all pipes align with header column boundaries (MD060).
+Step 3 fixes everything else.
 
 ## Workflows
 
@@ -102,6 +106,8 @@ markdownlint implements MD001–MD060 rules. Key rules enforced:
 | MD035 | hr-style | Horizontal rule style `---` |
 | MD046 | code-block-style | Use fenced code blocks |
 | MD048 | code-fence-style | Use backticks for code fences |
+| MD055 | table-pipes | Trailing pipes on both sides (backslash-pipe col backslash-pipe) |
+| MD060 | table-column-style | Table pipes align with header columns |
 
 Rules **disabled** (too strict for prose documentation):
 
@@ -127,7 +133,7 @@ Normalizes Markdown table separators from old-style `|------|------|` to GFM-com
 
 - Auto-width column alignment (matches header column lengths)
 - Detects already-correct separators and skips them
-- Verbose output option
+- Uses `string-width` for proper emoji/CJK handling
 
 ### Location
 
@@ -155,6 +161,52 @@ node ./references/fix-tables.js --check notes/file.md
 3. Replaces old-style separator with `| :--- |` matching the exact column count
 4. Auto-width: calculates width based on header column lengths
 5. Leaves all data rows and already-correct separators untouched
+
+## pad-tables.js
+
+Pads table data rows so every `|` aligns with the column boundaries set by the header. This enforces **MD060** (table-column-style).
+
+Unlike `fix-tables.js` which only touches the separator row, `pad-tables.js` rewrites **every row** — header, separator, and data — to match the widest cell in each column.
+
+**Pipeline order is important:**
+
+```
+fix-tables.js  →  normalizes separator format (:---)
+pad-tables.js  →  widens ALL rows to match column widths
+markdownlint   →  verifies MD060 compliance
+```
+
+**Features:**
+
+- String-width aware: handles emoji and CJK characters correctly
+- Idempotent: skips files that are already aligned
+- `--check` mode for read-only validation
+
+### Location
+
+```text
+./references/pad-tables.js
+```
+
+### Usage
+
+```bash
+# Fix a file
+node ./references/pad-tables.js notes/file.md
+
+# Check only (exit 0 if clean)
+node ./references/pad-tables.js --check notes/file.md
+
+# Fix all .md in directory
+node ./references/pad-tables.js --all docs/
+```
+
+### How It Works
+
+1. Finds all tables in the file (header + separator + data rows)
+2. Computes the max display width per column from all cells
+3. Rebuilds separator with correct dash count for each alignment
+4. Rebuilds every data row with cells padded to column width
 
 ### OpenCode Does Not Support Hooks
 
@@ -237,7 +289,7 @@ npx markdownlint-cli2 <path> --fix
 | Check only | `./lint.sh --check <path>` |
 | Check fences | `./lint.sh --fences <path>` |
 | Validate tables | `./lint.sh --validate <path>` |
-| Manual steps | `node ./references/fix-tables.js <path> && npx markdownlint-cli2 --config ./references/.markdownlint.json <path> --fix` |
+| Manual steps | `node ./references/fix-tables.js <path> && node ./references/pad-tables.js <path> && npx markdownlint-cli2 --config ./references/.markdownlint.json <path> --fix` |
 
 ## Verification
 

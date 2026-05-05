@@ -7,15 +7,6 @@ A skill for [OpenCode](https://opencode.ai) that provides instructions for forma
 
 > **Note:** This is a **Skill** (AI instructions), not a **Plugin** (executable code). The skill tells the AI how to format markdown; it doesn't automatically run on save.
 
-## Skill vs Plugin
-
-| Aspect           | Skill                                                | Plugin                                 |
-| :--------------- | :--------------------------------------------------- | :------------------------------------- |
-| **What it is**   | Instructions for the AI agent                        | Executable code that runs in OpenCode  |
-| **When it runs** | When you explicitly load it or AI reads instructions | Automatically on specific events       |
-| **Installation** | Clone to `~/.config/opencode/skills/`                | Add to `opencode.jsonc` plugins        |
-| **Example**      | This skill                                           | `@franlol/opencode-md-table-formatter` |
-
 ## Installation
 
 ```bash
@@ -23,13 +14,15 @@ A skill for [OpenCode](https://opencode.ai) that provides instructions for forma
 git clone https://github.com/CodeSigils/opencode-markdown-formatter-skill.git ~/.config/opencode/skills/markdown-formatter
 ```
 
+Then tell the AI to load the skill when needed.
+
 ## How to Use
 
-### Option 1: Explicitly Load the Skill
+### Option 1: Explicitly Load the Skill (Recommended)
 
 When you need to format markdown, tell the AI to load the skill:
 
-```bash
+```
 Load the markdown-formatter skill and format this file.
 ```
 
@@ -37,39 +30,29 @@ Or the AI can call: `skill({ name: "markdown-formatter" })`
 
 The skill instructs the AI to format markdown according to GFM standards automatically.
 
-### Option 2: Use the Wrapper Script (Recommended)
+### Option 2: Use the Wrapper Script
 
-Run the CLI directly — see full reference below:
+Run the CLI directly:
 
 ```bash
 ~/.config/opencode/skills/markdown-formatter/lint.sh --check file.md
 ```
 
-### Option 3: Use the Community Plugin (Live Formatting)
-
-For automatic formatting as you type, install the plugin:
-
-```bash
-# Install the plugin
-npm install @franlol/opencode-md-table-formatter
-```
-
-Add to `.opencode/opencode.jsonc`:
-
-```json
-{
-  "plugins": ["@franlol/opencode-md-table-formatter@latest"]
-}
-```
-
 ## What It Does
 
-When the skill is active, the AI will format markdown like this:
+The three-step pipeline fixes markdown violations:
+
+```
+fix-tables.js  →  normalizes separator format (:---)
+pad-tables.js  →  widens all rows to match column widths
+markdownlint   →  verifies MD060 compliance
+```
 
 | Feature            | Before               | After                              |
-| :----------------- | :------------------- | :--------------------------------- |
+| :---------------- | :------------------- | :--------------------------------- |
 | Table separator    | `\|------\|------\|` | `\| :--- \| :--- \|` (auto-widths) |
 | Table column width | `\|h1\|h2\|`         | `\| h1 \| h2 \|` (matches header)  |
+| Table pipe align   | `\| a \|Long\|`      | `\| a    \| Long \|` (MD060)       |
 | Heading            | `#Title`             | `# Title`                          |
 | Link               | `https://url`        | `[text](https://url)`              |
 | List               | `* Item`             | `- Item`                           |
@@ -89,7 +72,7 @@ When the skill is active, the AI will format markdown like this:
 
 ## lint.sh Reference
 
-All-in-one wrapper: fix-tables.js + markdownlint-cli2
+Three-step pipeline: fix-tables.js + pad-tables.js + markdownlint-cli2
 
 ```bash
 # Fix file or directory
@@ -114,38 +97,9 @@ lint.sh --dry-run <path>
 node --test test/test-js.mjs
 ```
 
-## Preventing Broken Tables
-
-The most common table error is **column count mismatch** between the header, separator, and data rows. This often happens with:
-
-- Extra `|` characters in type definitions (e.g., `"tab" | "space"`)
-- Copy-paste errors in separator rows
-
-### Validate Before You Push
-
-```bash
-# Add to CI or pre-commit to catch broken tables
-./lint.sh --validate docs/
-```
-
-This validates:
-
-- Header columns match separator columns
-- All data rows have the correct number of columns
-- Pipes inside cells are properly escaped with `&#124;`
-
-### How to Escape Pipes in Tables
-
-If a table cell contains a pipe character, escape it to prevent column misparsing:
-
-| Before (broken)              | After (fixed)                      |
-| :--------------------------- | :--------------------------------- |
-| `"tab" \| "space"`           | `"tab" &#124; "space"`             |
-| `"lf" \| "crlf" \| "cr"`     | `"lf" &#124; "crlf" &#124; "cr"`   |
-
 ## Auto-Lint on Write (Optional)
 
-Since OpenCode skills don't support config file hooks, you can use a pre-commit hook at the project level:
+Since OpenCode skills don't support config file hooks, you can use a git pre-commit hook:
 
 ```bash
 # Add to your project's .git/hooks/pre-commit
@@ -164,6 +118,12 @@ alias mdformat='~/.config/opencode/skills/markdown-formatter/lint.sh'
 ```
 
 Then use: `mdformat filename.md`
+
+## Requirements
+
+- [OpenCode](https://opencode.ai) installed
+- Node.js 18+ (for npx CLI tools)
+- pnpm (for local development)
 
 ## Testing
 
@@ -196,10 +156,6 @@ Run from the project root, or pass the config explicitly:
 npx markdownlint-cli2 --config ~/.config/opencode/skills/markdown-formatter/references/.markdownlint.json <path> --fix
 ```
 
-## Related Skills
-
-Other skills available in my [Hermes skills](https://github.com/CodeSigils/hermes-markdown-lint-skill) collection.
-
 ## Directory Structure
 
 ```text
@@ -207,10 +163,11 @@ opencode-markdown-formatter-skill/
 ├── SKILL.md                    # Skill definition (for OpenCode)
 ├── README.md                   # This file
 ├── CHANGELOG.md                # Keep a Changelog
-├── lint.sh                     # Wrapper script (fix-tables + markdownlint + fence check)
+├── lint.sh                     # Wrapper script (fix-tables + pad-tables + markdownlint)
 ├── CONTRIBUTING.md             # Contribution guidelines
 ├── LICENSE                     # MIT license
 ├── package.json                # npm scripts for convenience
+├── pnpm-lock.yaml              # Lockfile (committed)
 ├── .github/workflows/
 │   └── ci.yml                 # CI/CD pipeline
 ├── .gitignore                  # Git ignore rules
@@ -218,12 +175,16 @@ opencode-markdown-formatter-skill/
 │   └── check-fences.sh        # Fenced code block checker
 ├── references/
 │   ├── fix-tables.js           # Table separator normalizer
+│   ├── pad-tables.js           # Table row aligner (MD060)
 │   └── .markdownlint.json      # Lint configuration
-├── test/
-│   ├── test-js.mjs             # JavaScript tests
-│   └── kitchensink.md          # Test data
-└── .hermes/                    # Hermes agent config
+└── test/
+    ├── test-js.mjs             # JavaScript tests
+    └── kitchensink.md          # Test data
 ```
+
+## Related Skills
+
+Other skills available in my [Hermes skills](https://github.com/CodeSigils/hermes-markdown-lint-skill) collection.
 
 ## License
 
