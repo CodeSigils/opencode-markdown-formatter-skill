@@ -17,6 +17,7 @@ Thumbs.db
 # OpenCode (can be project-specific)
 .opencode/
 .skills/
+.open-mem/
 
 # Python
 __pycache__/
