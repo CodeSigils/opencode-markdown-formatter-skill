@@ -18,6 +18,7 @@ Thumbs.db
 .opencode/
 .skills/
 .open-mem/
+in-memoria.db
 
 # Python
 __pycache__/
